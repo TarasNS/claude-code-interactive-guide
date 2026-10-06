@@ -54,6 +54,7 @@
           done: a.done === true,
           xp: typeof a.xp === 'number' && a.xp >= 0 ? a.xp : 0
         };
+        if (a.hints) s.activities[id].hints = Math.max(0, a.hints | 0);
       });
     }
     s.skillDescription = typeof raw.skillDescription === 'string' ? raw.skillDescription : '';
@@ -137,6 +138,13 @@
       return a ? { attempts: a.attempts, done: a.done, xp: a.xp } : null;
     }
 
+    function recordHint(id) {
+      var a = state.activities[id] || { attempts: 0, done: false, xp: 0 };
+      a.hints = (a.hints | 0) + 1;
+      state.activities[id] = a;
+      save();
+    }
+
     function recordAttempt(id, result) {
       var a = state.activities[id] || { attempts: 0, done: false, xp: 0 };
       if (a.done) return { awarded: 0, done: true };
@@ -197,6 +205,7 @@
       setSetting: setSetting,
       getActivity: getActivity,
       recordAttempt: recordAttempt,
+      recordHint: recordHint,
       setBeat: setBeat,
       completeMission: completeMission,
       isMissionComplete: isMissionComplete,

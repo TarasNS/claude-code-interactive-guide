@@ -5,23 +5,14 @@
   var mount = Lab.dom.mount;
   var store = Lab.store;
 
-  var main, rail, menuToggle, xpLabel, headerXp, controls;
-  var settingsPanel, saveNote, confirmArea;
+  var STAGES = ['Start', 'Plan', 'Design', 'Build', 'Test', 'Deploy', 'Maintain'];
+  var STATUS_TEXT = { locked: 'Locked', available: 'Available', 'in-progress': 'In progress', complete: 'Complete' };
+  var STATUS_ICON = { locked: 'lock', available: 'available', 'in-progress': 'progress', complete: 'check' };
 
-  function renderHeader() {
-    var info = Lab.xp.levelInfo(completedMap());
-    var total = store.totalXp();
-    xpLabel.textContent = 'Level ' + info.level + ' ' + info.title + ' · XP ' + total + ' / ' + Lab.xp.TOTAL_XP;
-    var old = headerXp.querySelector('.xp-bar');
-    if (old) headerXp.removeChild(old);
-    var pct = Math.min(100, Math.round((total / Lab.xp.TOTAL_XP) * 100));
-    var fill = h('div', { class: 'xp-fill', 'data-pct': pct });
-    fill.style.width = pct + '%';
-    headerXp.appendChild(h('div', { class: 'xp-bar', role: 'progressbar', 'aria-label': 'Total XP', 'aria-valuemin': 0, 'aria-valuemax': Lab.xp.TOTAL_XP, 'aria-valuenow': total }, fill));
-    saveNote.textContent = store.isPersistent()
-      ? 'Progress is saved in this browser.'
-      : 'Progress will not be saved in this browser.';
-  }
+  var main, rail, railList, menuToggle, xpLabel, headerXp, controls;
+  var settingsPanel, saveNote, confirmArea, explainBtn;
+  var lastExplain = null;
+  var currentRoute = null;
 
   function completedMap() {
     var map = {};
@@ -35,23 +26,59 @@
     return Object.keys(s.missions).length > 0 || Object.keys(s.activities).length > 0;
   }
 
-  function aiNotice() {
-    return h('section', { class: 'notice', 'aria-labelledby': 'ai-notice-title' },
-      h('h2', { id: 'ai-notice-title' }, 'Using AI tools at Nordic Solar'),
-      h('ul', null,
-        h('li', null, 'Use only AI coding tools approved by the Head of IT & Digitalization.'),
-        h('li', null, 'Never give them proprietary source code, internal system logic, confidential company information, personal data or credentials.'),
-        h('li', null, 'Review AI-generated code with the same care as third-party code.')
-      ),
-      h('p', null, 'These points come from the Company Rules on Artificial Intelligence and the Company Rules on Secure Software Development.')
-    );
+  function renderHeader() {
+    var info = Lab.xp.levelInfo(completedMap());
+    var total = store.totalXp();
+    xpLabel.textContent = 'Level ' + info.level + ' ' + info.title + ' · XP ' + total + ' / ' + Lab.xp.TOTAL_XP;
+    var old = headerXp.querySelector('.xp-bar');
+    if (old) headerXp.removeChild(old);
+    var pct = Math.min(100, Math.round((total / Lab.xp.TOTAL_XP) * 100));
+    var fill = h('div', { class: 'xp-fill' });
+    fill.style.width = pct + '%';
+    headerXp.appendChild(h('div', { class: 'xp-bar', role: 'progressbar', 'aria-label': 'Total XP', 'aria-valuemin': 0, 'aria-valuemax': Lab.xp.TOTAL_XP, 'aria-valuenow': total }, fill));
+    saveNote.textContent = store.isPersistent()
+      ? 'Progress is saved in this browser.'
+      : 'Progress will not be saved in this browser.';
   }
 
-  function simulatedNotice() {
-    return h('section', { class: 'notice', 'aria-labelledby': 'sim-notice-title' },
-      h('h2', { id: 'sim-notice-title' }, 'No AI model is called'),
-      h('p', null, 'Every "Claude" reply in this product is a scripted example labelled Simulated. The product makes no network requests.')
+  function renderRail() {
+    var state = store.getState();
+    var explore = store.getSettings().explore;
+    var activeId = currentRoute && currentRoute.name === 'mission' ? currentRoute.params.id : null;
+    var groups = STAGES.map(function (stage) {
+      var list = Lab.xp.MISSIONS.filter(function (m) { return m.stage === stage; });
+      if (!list.length) return null;
+      var items = list.map(function (m) {
+        var status = Lab.unlock.missionStatus(m.id, state, explore);
+        var text = 'Mission ' + m.n + ': ' + m.title;
+        var inner = [
+          Lab.ui.icon(STATUS_ICON[status]),
+          h('span', { class: 'rail-text' }, text),
+          h('span', { class: 'rail-status' }, STATUS_TEXT[status])
+        ];
+        if (status === 'locked') {
+          return h('li', null, h('span', { class: 'rail-link', 'data-status': status }, inner));
+        }
+        return h('li', null, h('a', {
+          class: 'rail-link',
+          href: '#/m/' + m.id,
+          'data-status': status,
+          'aria-current': activeId === m.id ? 'page' : null
+        }, inner));
+      });
+      return [h('h3', { class: 'rail-stage' }, stage), h('ul', { class: 'rail-list' }, items)];
+    });
+    var extras = h('ul', { class: 'rail-list' },
+      h('li', null, h('a', { class: 'rail-link', href: '#/' }, h('span', { class: 'rail-text' }, 'Home'))),
+      h('li', null, h('a', { class: 'rail-link', href: '#/map' }, h('span', { class: 'rail-text' }, 'Dependency map'))),
+      h('li', null, h('a', { class: 'rail-link', href: '#/summary' }, h('span', { class: 'rail-text' }, 'Journey summary')))
     );
+    mount(railList, [extras, groups]);
+  }
+
+  function refresh() {
+    renderHeader();
+    renderRail();
   }
 
   function renderLanding() {
@@ -61,7 +88,7 @@
     );
     if (hasProgress()) {
       var last = store.getLastView();
-      var target = /^#\/(m\/[a-z0-9-]+|map|summary)$/.test(last) ? last : '#/m/orientation';
+      var target = /^#\/(m\/[a-z0-9-]+(\?beat=\d+)?|map|summary)$/.test(last) ? last : '#/m/orientation';
       actions.appendChild(h('a', { class: 'btn', href: target }, 'Continue'));
     }
     actions.appendChild(h('button', {
@@ -79,36 +106,50 @@
       h('h3', null, 'Learn the AI-native software lifecycle with Claude Code, one short mission at a time.'),
       h('p', null, 'You work on one fictional project, ClaimsPortal, through 15 missions. XP is awarded only for verified understanding.'),
       actions,
-      simulatedNotice(),
-      aiNotice()
+      Lab.ui.simulatedNotice(),
+      Lab.ui.aiNotice()
     );
   }
 
-  function renderPlaceholder(title) {
+  function renderPlaceholder(title, message) {
     return h('div', null,
       h('h1', null, title),
-      h('p', null, 'This view is built in a later phase.'),
+      h('p', null, message || 'This view is built in a later phase.'),
       h('p', null, h('a', { href: '#/' }, 'Back to the start'))
     );
   }
 
-  function missionTitle(id) {
-    var m = Lab.xp.MISSIONS.filter(function (x) { return x.id === id; })[0];
-    return 'Mission ' + m.n + ': ' + id;
+  function missionRow(id) {
+    return Lab.xp.MISSIONS.filter(function (x) { return x.id === id; })[0];
+  }
+
+  function renderMissionRoute(route) {
+    var row = missionRow(route.params.id);
+    var status = Lab.unlock.missionStatus(row.id, store.getState(), store.getSettings().explore);
+    if (status === 'locked') {
+      var prev = Lab.xp.MISSIONS[row.n - 1];
+      return renderPlaceholder('Mission ' + row.n + ': ' + row.title,
+        'This mission unlocks after "' + prev.title + '". You can also turn on Explore freely on the start page.');
+    }
+    var node = Lab.content.getMission(row.id) ? Lab.mission.view(row.id, route) : null;
+    return node || renderPlaceholder('Mission ' + row.n + ': ' + row.title, 'This mission is built in a later phase.');
   }
 
   function renderRoute(route) {
+    currentRoute = route;
+    Lab.mission.leave();
     var view;
     if (route.name === 'landing') view = renderLanding();
     else if (route.name === 'map') view = renderPlaceholder('Dependency map');
     else if (route.name === 'summary') view = renderPlaceholder('Journey summary');
-    else view = renderPlaceholder(missionTitle(route.params.id));
+    else view = renderMissionRoute(route);
     mount(main, view);
-    if (route.name !== 'landing') store.setLastView(window.location.hash);
+    if (route.name !== 'landing' && route.name !== 'mission') store.setLastView(window.location.hash);
     Lab.a11y.focusHeading(main);
     closeRail();
-    renderHeader();
-    document.title = (route.name === 'landing' ? '' : main.querySelector('h1').textContent + ' · ') + 'Claude Engineering Lab';
+    refresh();
+    var titleEl = main.querySelector('h1');
+    document.title = (route.name === 'landing' || !titleEl ? '' : titleEl.textContent + ' · ') + 'Claude Engineering Lab';
   }
 
   function openRail() {
@@ -132,22 +173,27 @@
     return h('p', null, h('label', { for: id }, labelText + ' '), sel);
   }
 
+  function syncExplainButton() {
+    var deeper = store.getSettings().explain === 'deeper';
+    explainBtn.setAttribute('aria-pressed', deeper ? 'true' : 'false');
+    explainBtn.textContent = deeper ? 'Go deeper' : 'Explain simply';
+  }
+
   function buildControls() {
     var s = store.getSettings();
+    lastExplain = s.explain;
 
-    var explainBtn = h('button', {
+    explainBtn = h('button', {
       type: 'button',
       class: 'btn',
       id: 'explain-toggle',
-      'aria-pressed': s.explain === 'deeper' ? 'true' : 'false',
       onclick: function () {
         var next = store.getSettings().explain === 'deeper' ? 'simple' : 'deeper';
         store.setSetting('explain', next);
-        explainBtn.setAttribute('aria-pressed', next === 'deeper' ? 'true' : 'false');
-        explainBtn.textContent = next === 'deeper' ? 'Go deeper' : 'Explain simply';
         Lab.a11y.announce(next === 'deeper' ? 'Showing deeper explanations.' : 'Showing simple explanations.');
       }
-    }, s.explain === 'deeper' ? 'Go deeper' : 'Explain simply');
+    });
+    syncExplainButton();
 
     saveNote = h('p', { id: 'save-note' });
     confirmArea = h('div', { id: 'reset-confirm' });
@@ -201,9 +247,20 @@
     ));
   }
 
+  function onStoreChange() {
+    var explain = store.getSettings().explain;
+    refresh();
+    if (explain !== lastExplain) {
+      lastExplain = explain;
+      syncExplainButton();
+      Lab.mission.rerender();
+    }
+  }
+
   function boot() {
     main = document.getElementById('main');
     rail = document.getElementById('rail');
+    railList = document.getElementById('rail-list');
     menuToggle = document.getElementById('menu-toggle');
     xpLabel = document.getElementById('xp-label');
     headerXp = document.getElementById('header-xp');
@@ -222,6 +279,7 @@
       }
     });
 
+    store.subscribe(onStoreChange);
     Lab.router.start(renderRoute);
   }
 
