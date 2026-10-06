@@ -35,6 +35,13 @@ pre {
 }
 
 button, input, select, textarea { font: inherit; color: inherit; }
+select, textarea, input:not([type="radio"]):not([type="checkbox"]) {
+  min-height: 44px;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface-1);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-s);
+}
 
 .btn {
   display: inline-flex;
@@ -122,3 +129,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+.lead { font-size: var(--text-m); max-width: 60ch; }
+summary { cursor: pointer; padding-block: var(--space-3); }

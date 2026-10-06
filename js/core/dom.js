@@ -38,6 +38,21 @@
     else el.appendChild(document.createTextNode(String(child)));
   }
 
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function svg(tag, attrs) {
+    var el = document.createElementNS(SVG_NS, tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v === null || v === undefined || v === false) return;
+        if (isSafeAttribute(k, v) && k.indexOf('on') !== 0) el.setAttribute(k, String(v));
+      });
+    }
+    for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
+    return el;
+  }
+
   function mount(container, node) {
     while (container.firstChild) container.removeChild(container.firstChild);
     append(container, node);
@@ -54,5 +69,5 @@
     return (prefix || 'id') + '-' + counter;
   }
 
-  Lab.dom = { h: h, mount: mount, on: on, uid: uid };
+  Lab.dom = { h: h, svg: svg, mount: mount, on: on, uid: uid };
 })();

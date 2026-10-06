@@ -76,12 +76,12 @@
 
 @media (min-width: 768px) {
   .app {
-    grid-template-columns: 5rem minmax(0, 1fr);
+    grid-template-columns: 7.5rem minmax(0, 1fr);
     grid-template-areas: "header header" "rail lab" "coach coach";
   }
   .rail { display: block; padding: var(--space-3); }
   .rail[data-open="true"] { position: static; width: auto; box-shadow: none; }
-  .rail-label { display: none; }
+  .rail h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: -1px; }
   .menu-toggle { display: none; }
   .lab { padding: var(--space-6); }
 }
@@ -91,6 +91,6 @@
     grid-template-columns: 16rem minmax(0, 1fr) 22rem;
     grid-template-areas: "header header header" "rail lab system" "coach coach coach";
   }
-  .rail-label { display: inline; }
+  .rail h2 { position: static; width: auto; height: auto; overflow: visible; clip-path: none; margin: 0 0 var(--space-3); }
   .system { display: block; }
 }

@@ -35,10 +35,15 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `heading` | string | One key message, as a short sentence or phrase |
 | `simple` | string | Plain-English text, at most 60 words. Required except on `deeper` beats |
 | `deeper` | string | Optional extra precision for Go deeper mode, at most 60 words. Required on `deeper` beats |
-| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree` |
+| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate`, `policygrid`, `workflow` |
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
+| `terms` | array of strings | Optional: glossary ids (`js/content/glossary.js`) whose definitions are listed under the text; Deeper mode adds the deeper definition |
+| `notes` | array of strings | Optional: extra paragraphs after the text, each at most 60 words |
+| `cards` | array | Optional: `{ title, text }` entries shown as a list, for example a pattern gallery |
+| `download` | string | Optional on `debrief` beats: `skill-md` adds the Download SKILL.md button |
+| `notice` | string | Optional on `debrief` beats: `ai-tools` shows the GOV-10 "Using AI tools at Nordic Solar" notice |
 | `activity` | object | Required on `try` beats, see below |
 | `required` | boolean | Default `true`. Set `false` for optional activities; `deeper` beats are never required |
 | `humanDecides` | string | Required on `debrief` beats: what the human still decides |
@@ -50,6 +55,8 @@ Nothing else may appear in the file except a single optional first-line comment 
 |---|---|---|
 | `id` | string | `<missionId>.<name>`, for example `hooks.build` |
 | `maxXp` | integer | From the mission's section in the spec |
+| `prompt` | string | Optional, `choice` only: the legend above the options |
+| `hints` | array of strings | Optional: up to two progressive hints. Without it the component supplies generic hints |
 | `completion` | string | Plain description of the completion rule from the spec, for example `"all items correctly placed"` |
 | `buckets` | array of strings | For classifiers: the bucket labels, in display order |
 | `items` | array | See below; may be empty for activities whose content is in `config` (for example a terminal run) |
@@ -118,3 +125,36 @@ Lab.content.registerMission({
 ```
 
 (The example is shortened: a real Hooks mission has all the beats and both activities from spec §9.9, and its activity XP adds up to 30.)
+
+## Component configuration (Phase 2)
+
+- `classifier`: uses `activity.buckets` and `activity.items`. Optional `config.request` (a quoted request shown above the cards) and `config.artifact` (`{ file, title, sections: [{ heading, bucket }], extra: [{ heading, lines }] }`), which builds a copyable file from the learner's placements once every card is placed. With `buckets: []` the buckets are taken from the items' answers, in order.
+- `compare`: `config.views` is `[{ id, label, heading, lines: [{ id, text, mono, traces: [lineId] }] }]` and `config.legend` names the radio group. A line's `traces` link it to lines in the other view; linking is on when any line has `traces`.
+- `stepper`: `config.nodes` is `[{ id, label, detail }]` and `config.steps` is `[{ caption, reveal: [nodeId], active: nodeId }]`. Nodes reveal cumulatively.
+- `choice`: `activity.items` are the options. An option is the right one when `"answer": "correct"`. Optional `consequence` text is shown as text under a tried option.
+
+## Components added in Phase 4
+
+- `terminal`: replay mode uses `config.script` lines (`who`: `cmd`, `out`, `claude`; optional `status`, `highlight` (tree paths), `turn` to group lines) revealed with Next. Interactive mode uses `config.commands` (`{ id, cmd, aliases, hint, lines, sets, variants: [{ if, lines, sets }] }`) and `config.goal` (`{ flags, sequence }`). `config.tree` is a tree object or the name of a tree in `js/content/repo.js`.
+- `tree`: `config.root` is a tree object or a tree name (`claimsportal`, `skill`); each node has `name`, `type`, `purpose`, `sample`, optional `required` or `optional`.
+- `flagger`: `activity.items` with `answer` of `flaw` or `ok`; `config.questions` (`{ q, a }`) and `config.finish` (`{ label, blocked, success }`).
+- `builder`: `activity.items` with `answer` set to a slot id, or `none` for a distractor that must stay out; `config.slots`, `config.preview`, optional `config.rules` (`{ type: "before", a, b, reason }`).
+- `textlab`: the Skill description lab (spec 9.8.1). No items; the rules live in `js/core/skills-validator.js`.
+- `stepper` also accepts `config.paths` (nodes then carry a `path` id, for side-by-side flows) and per-step `meter: { value, label }`.
+
+## Components added in Phase 5
+
+- `choice` multi-question mode: `config.options` is a shared option list and `activity.items` are the questions (`answer` is one of the options). Without `config.options` it is the single-question mode.
+- `builder` slots accept `max` (a one-choice decision; a new pick replaces the old one) and `ordered` (shown as a numbered list). `config.rules` also accepts `{ type: "last", a, reason }`.
+- `evalgate`: `config.changes` is `[{ id, title, detail, verdict: "merge" | "reject", explanation, results: [{ task, outcome: "pass" | "regression", note }] }]`. The learner must run the suite for a change before deciding.
+
+## Components added in Phase 6
+
+- `pipeline`: `config.stages` is `[{ id, label, detail }]`. `config.outcomes` maps a stage id to `pass`, `gate` or `fail` (fixed scenario data). `config.gate` is `{ stage, approver, summary: [lines], approve, reject }`; `config.incident` is `{ stage, title, prompt, rollback, options: [{ id, label, correct, consequence }] }`. `config.mode: "demo"` approves the gate itself and grades nothing. `config.static: true` shows stages with a fixed `state` (`passed`, `approval`, `locked`...) and an optional `stateLabel`.
+- `policygrid`: `config.actions`, `config.envs`, `config.rules` (`{ action, env, allow: ["ask", "deny"], reason }`) and `config.solution` (used to show a finished grid).
+- `classifier` also accepts `config.diff` (a block of text such as a diff or log, shown above the cards, with `config.diffLabel`).
+- `choice` multi-question mode also accepts a per-question `options` array on an item and `config.intro` (`[{ title, text }]`) shown above the questions.
+
+## Components added in Phase 7
+
+- `workflow`: the final challenge. `config.packet` is `[{ id, label, lines }]` (scenario tabs), `config.tiles` is `[{ id, label, hint }]` (the twelve tiles, whose ids the rules engine in `js/core/workflow.js` knows), `config.policies` is `[{ id, label }]`, `config.reasons` is `[{ id, label }]` for a subagent, and `config.simulation` is `{ nodes, steps }` for the final animated run. The rules (R1 to R8, O1, N1), their consequence text and the scoring live in `js/core/workflow.js`, not in mission data. A component may report `maxXp` in its result to award a partial score.

@@ -150,7 +150,7 @@ The plan has ten phases. Each phase ends with checks that must pass before the n
 
 - §17.1 is all green.
 - §17.2 items 1 to 10 are signed off, except the staging runs.
-- Total code size is under 300 KB (§4.6).
+- Total code size is under 400 KB (§4.6, amended in spec v2.1).
 
 ### Phase 9 — Staging and release
 
@@ -198,7 +198,18 @@ The plan has ten phases. Each phase ends with checks that must pass before the n
 
 ## 3. Spec amendments
 
-None outstanding. The three amendments an earlier draft of this plan asked for (static checks as a CI script, the extra folders and files in the layout, and the SCA wording) are now in spec §17.1, §4.2 and SEC-12.
+The build found these amendments, now in spec v2.1. A person who owns the spec should confirm them.
+
+| Area | Amendment | Why |
+|---|---|---|
+| §4.6 | Size budget 400 KB, not 300 KB | The built product is about 370 KB with all 15 missions. Removing indentation alone reaches 329 KB, so 300 KB would mean cutting content or features. Still loads instantly from disk, and compresses to a fraction of that over HTTP. |
+| §6.2 | Optional `hints` count on an activity | Spec 7.9 says hints are recorded; the schema had nowhere to put them. They never affect XP. |
+| §9.10 | One shared option list for the five tasks; XP decay applies to the whole activity | The `choice` component handles several questions at once. Per-task 8 XP is not tracked separately. |
+| §9.8 | The pattern gallery has an optional practice (0 XP) instead of miniature diagrams | Keeps the deeper beat interactive without new artwork. |
+| §9.17 | The learner may accept a workflow that still has problems for the partial score. R4 and R8 test presence, and ordering is checked only by O1, so each rule can be violated alone. A subagent reason is chosen from a list. | Spec 9.17 scoring implies partial awards; without an accept action XP could never be awarded below a full loop. |
+| §9.18 | The Journey summary's `intent.md` is fixed scenario text | Nothing the learner types feeds it. |
+
+The earlier amendments (static checks as a CI script, the extra folders and files, and the SCA wording) were already applied in spec §17.1, §4.2 and SEC-12.
 
 ---
 

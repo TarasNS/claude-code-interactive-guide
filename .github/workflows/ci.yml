@@ -2,7 +2,6 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -70,6 +69,15 @@ jobs:
         run: |
           python tools/static-checks.py
         continue-on-error: false
+
+      - name: Syntax-check every JavaScript file
+        run: |
+          for f in $(find js tests tools -name '*.js'); do node --check "$f" || exit 1; done
+
+      - name: Run the offline tool tests
+        run: |
+          python tools/test_check_headers.py
+          python tools/hooks/test_hooks.py
 
   tests:
     name: Browser Tests
