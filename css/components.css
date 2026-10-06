@@ -310,3 +310,37 @@ button.compare-line { cursor: pointer; min-height: 44px; }
 .cl-context figcaption { font-weight: 700; font-size: var(--text-xs); margin-bottom: var(--space-1); }
 .cl-context-text { white-space: pre; }
 .choice-intro { margin-top: 0; }
+
+/* Final challenge */
+.wf { display: grid; gap: var(--space-3); }
+.wf h3 { font-size: var(--text-m); font-weight: 700; margin: var(--space-3) 0 0; }
+.wf-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.wf-tabs [role="tab"] { min-height: 44px; padding: var(--space-2) var(--space-3); border: 2px solid var(--border); border-radius: var(--radius-m); background: var(--surface-1); cursor: pointer; }
+.wf-tabs [role="tab"][aria-selected="true"] { border: 4px solid var(--text); padding: calc(var(--space-2) - 2px) calc(var(--space-3) - 2px); font-weight: 700; }
+.wf-panel { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-3) var(--space-4); background: var(--surface-1); }
+.wf-panel ul { margin: 0; }
+.wf-lane { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+.wf-step { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; padding: var(--space-2) var(--space-3); border: 2px solid var(--border); border-radius: var(--radius-m); background: var(--surface-1); max-width: none; }
+.wf-num { font-weight: 700; }
+.wf-name { font-weight: 700; }
+.wf-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
+.wf-cover { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-3); }
+.wf-cover legend { font-weight: 700; padding: 0 var(--space-2); }
+.wf-findings { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+.wf-finding { border: 4px double var(--text); border-radius: var(--radius-m); padding: var(--space-3); max-width: none; }
+.wf-finding[data-severity="note"] { border: 2px solid var(--border); }
+.wf-sev { font-size: var(--text-xs); letter-spacing: 0.04em; }
+.wf-title { font-weight: 700; }
+.wf-conseq, .wf-lesson, .wf-score { margin: var(--space-2) 0 0; }
+.wf-sim { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-4); background: var(--surface-1); display: grid; gap: var(--space-3); }
+
+/* Journey summary */
+.summary { display: grid; gap: var(--space-5); max-width: 60rem; }
+.sum-block h2 { font-size: var(--text-l); }
+.sum-level { font-size: var(--text-l); margin: 0 0 var(--space-2); }
+.sum-criteria { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+.sum-criterion { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: baseline; padding: var(--space-2) var(--space-3); border: 2px solid var(--border); border-radius: var(--radius-s); background: var(--surface-1); max-width: none; }
+.sum-criterion[data-covered="true"] { border-style: solid; }
+.sum-criterion[data-covered="false"] { border-style: dashed; }
+.sum-state { font-size: var(--text-xs); letter-spacing: 0.04em; }
+.sum-missions { font-size: var(--text-xs); }

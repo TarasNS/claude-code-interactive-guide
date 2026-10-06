@@ -71,7 +71,7 @@
     var previous = {};
     var root = h('div', { class: 'sys' });
     var selected = null;
-    var showHumans = false;
+    var showHumans = !!(opts && opts.showHumans);
     var prefix = Lab.dom.uid('sys');
 
     function render() {
