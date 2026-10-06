@@ -8,7 +8,91 @@
     return item.answer === true || item.answer === 'correct';
   }
 
+  // Several questions sharing one option list: config.options = ['One agent', ...];
+  // activity.items = [{ id, text, answer: <option>, explanation }].
+  function createMulti(ctx) {
+    var activity = ctx.activity;
+    var options = ctx.config.options;
+    var items = activity.items;
+    var say = ctx.say || Lab.coach.say;
+    var base = Lab.dom.uid('choices');
+    var state = { done: {}, tried: {}, mistakes: 0 };
+    if (ctx.initialState) {
+      state.done = Object.assign({}, ctx.initialState.done || {});
+      state.tried = Object.assign({}, ctx.initialState.tried || {});
+      state.mistakes = ctx.initialState.mistakes | 0;
+    }
+    if (ctx.done) items.forEach(function (it) { state.done[it.id] = it.answer; });
+    var root = h('div', { class: 'choice choice-multi' });
+
+    function snapshot() { return { done: state.done, tried: state.tried, mistakes: state.mistakes }; }
+    function emit() { if (ctx.onState) ctx.onState(snapshot()); }
+
+    function focusOption(it, option) {
+      var idx = options.indexOf(option);
+      var el = root.querySelector('#' + base + '-' + it.id + '-' + idx);
+      if (el) el.focus();
+    }
+
+    function focusNextOpen() {
+      var next = items.filter(function (x) { return !state.done[x.id]; })[0];
+      var el = next && root.querySelector('#' + base + '-' + next.id + '-0');
+      if (el) el.focus();
+    }
+
+    function pick(it, option) {
+      if (state.done[it.id]) return;
+      state.tried[it.id] = (state.tried[it.id] || []).concat(option);
+      if (option === it.answer) {
+        state.done[it.id] = option;
+        say('correct', it.explanation);
+        emit();
+        render();
+        focusNextOpen();
+        var all = items.every(function (x) { return state.done[x.id]; });
+        if (all) ctx.onResult({ activityId: activity.id, correct: true, mistakes: state.mistakes, detail: { done: state.done } });
+      } else {
+        state.mistakes += 1;
+        say('wrong', 'Not "' + option + '". ' + it.explanation);
+        emit();
+        render();
+        focusOption(it, option);
+        ctx.onResult({ activityId: activity.id, correct: false, mistakes: state.mistakes, detail: { itemId: it.id, option: option } });
+      }
+    }
+
+    function render() {
+      var sets = items.map(function (it) {
+        var finished = !!state.done[it.id];
+        var radios = options.map(function (opt, i) {
+          var rid = base + '-' + it.id + '-' + i;
+          var tried = (state.tried[it.id] || []).indexOf(opt) >= 0;
+          var good = finished && state.done[it.id] === opt;
+          var input = h('input', {
+            type: 'radio', name: base + '-' + it.id, id: rid, value: opt,
+            checked: good,
+            disabled: finished && !good ? 'true' : null,
+            onchange: function () { pick(it, opt); }
+          });
+          return h('div', { class: 'choice-card', 'data-state': good ? 'correct' : (tried ? 'tried' : 'open') },
+            input,
+            h('label', { for: rid },
+              h('span', { class: 'choice-text' }, opt),
+              good ? h('span', { class: 'choice-status' }, Lab.ui.icon('check'), ' Chosen: correct')
+                : (tried ? h('span', { class: 'choice-status' }, Lab.ui.icon('cross'), ' Tried: not this one') : null)));
+        });
+        return h('fieldset', { class: 'choice-set' }, h('legend', null, it.text), radios);
+      });
+      mount(root, sets);
+    }
+
+    render();
+    Lab.coach.setHints(activity.hints || ['Ask whether the extra agents save you time, or only add coordination work.'], activity.id);
+    return { el: root, getState: snapshot };
+  }
+
   function create(ctx) {
+    if (ctx.config && ctx.config.options) return createMulti(ctx);
     var activity = ctx.activity;
     var items = activity.items;
     var say = ctx.say || Lab.coach.say;
@@ -27,6 +111,11 @@
 
     var root = h('div', { class: 'choice' });
 
+    function focusSingle(item) {
+      var el = root.querySelector('#' + name + '-' + item.id);
+      if (el) el.focus();
+    }
+
     function pick(item) {
       if (done) return;
       if (state.tried.indexOf(item.id) < 0) state.tried.push(item.id);
@@ -36,12 +125,14 @@
         say('correct', item.explanation, item.consequence || null);
         if (ctx.onState) ctx.onState(snapshot());
         render();
+        focusSingle(item);
         ctx.onResult({ activityId: activity.id, correct: true, mistakes: state.mistakes, detail: { chosen: item.id } });
       } else {
         state.mistakes += 1;
         say('wrong', item.explanation, item.consequence || null);
         if (ctx.onState) ctx.onState(snapshot());
         render();
+        focusSingle(item);
         ctx.onResult({ activityId: activity.id, correct: false, mistakes: state.mistakes, detail: { chosen: item.id } });
       }
     }
