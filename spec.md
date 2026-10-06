@@ -134,6 +134,8 @@ js/
 tests.html                 dependency-free browser test page (§17.1)
 tests/                     test scripts loaded by tests.html
 tools/static-checks.py     CI-only checks (§17.1); never shipped
+tools/hooks/               Claude Code hooks that guard this repository (build gate, push, secrets, brand, missions, dependencies)
+.claude/settings.json      wires the hooks in; .claude/build-unblocked opens the build gate (GOV-07)
 README.md                  how to run, structure, how to add a mission, file:// posture (SEC-09)
 SECURITY.md                how to report a security issue (SEC-17)
 .github/
