@@ -9,8 +9,8 @@
     {
       id: 'claude-code-overview',
       label: 'Claude Code overview',
-      url: 'https://docs.claude.com/en/docs/claude-code/overview',
-      verified: null
+      url: 'https://code.claude.com/docs/en/overview',
+      verified: '2026-10-06'
     }
   ];
 })();

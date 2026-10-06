@@ -38,76 +38,50 @@ Running from `file://` (direct file access) offers a weaker security posture tha
 
 ```
 .
-├── index.html                  Shell, landmarks, script and style tags
+├── index.html                  Shell, landmarks, CSP meta tag, script and style tags
 ├── css/
-│   ├── tokens.css             Design tokens (colour, typography, spacing)
+│   ├── tokens.css             Design tokens (the only file with colour literals)
 │   ├── base.css               Reset, typography, focus, utilities
 │   ├── layout.css             App shell, rail, lab, responsive rules
-│   ├── components.css         Component styling (classifier, terminal, etc.)
-│   └── missions.css           Mission-specific overrides
+│   └── components.css         Component, state and view styling
 ├── js/
-│   ├── core/
-│   │   ├── store.js           State, persistence, selectors
-│   │   ├── router.js          Hash routing
-│   │   ├── xp.js              XP awards, levels, anti-gaming rules
-│   │   ├── unlock.js          Mission and map-node unlock rules
-│   │   ├── skills-validator.js Skill description validator
-│   │   ├── workflow.js        Final challenge rules engine
-│   │   ├── a11y.js            Accessibility: announcer, focus, reduced motion
-│   │   └── dom.js             DOM helpers
-│   ├── components/
-│   │   ├── choice.js          Single-choice cards with feedback
-│   │   ├── classifier.js      Tap-to-place sorting
-│   │   ├── compare.js         Two-state toggle view
-│   │   ├── stepper.js         Animated sequence
-│   │   ├── terminal.js        Scripted terminal
-│   │   ├── pipeline.js        Stage runner with state
-│   │   ├── builder.js         Arrange and configure items
-│   │   ├── tree.js            Explorable file tree
-│   │   ├── diagram.js         Your System SVG renderer
-│   │   ├── map.js             Dependency map renderer
-│   │   └── coach.js           Feedback panel
-│   ├── content/
-│   │   ├── missions/          m00-orientation.js ... m14-final.js
-│   │   ├── system-nodes.js    Your System diagram nodes
-│   │   ├── map-graph.js       Dependency map nodes and edges
-│   │   ├── links.js           Curated outbound links
-│   │   └── glossary.js        Simple and Deeper definitions
-│   └── app.js                 Boot, router setup, first render
-├── tests.html                 In-browser test runner
-├── tests/
-│   └── *.test.js              Test scripts
+│   ├── app.js                 Boot, shell, routes, rail, settings
+│   ├── mission.js             Mission runner: beats, gating, XP, hints, level banner
+│   ├── summary.js             Journey summary view
+│   ├── core/                  dom, a11y, xp, unlock, store, router,
+│   │                          skills-validator, workflow (rules engine)
+│   ├── components/            icons, notices, coach, classifier, compare, stepper,
+│   │                          choice, diagram, map, tree, terminal, flagger, builder,
+│   │                          textlab, evalgate, pipeline, policygrid, workflow, files
+│   └── content/
+│       ├── registry.js        Mission, glossary and link lookups
+│       ├── missions/          m00-orientation.js ... m14-final.js (data, one per mission)
+│       ├── glossary.js, links.js, repo.js, system-nodes.js, map-graph.js, final.js
+├── tests.html                 In-browser test runner (prints RESULT: PASS or FAIL)
+├── tests/                     Test scripts loaded by tests.html
 ├── tools/
-│   ├── static-checks.py       CI script for palette, forbidden APIs, emoji
+│   ├── static-checks.py       CI script: palette, forbidden code, emoji, size budget
+│   ├── view-audit.js          Accessibility audit to paste into a browser console
 │   └── hooks/                 Claude Code hooks (build gate, push guard, etc.)
-├── .github/
-│   ├── workflows/
-│   │   └── ci.yml             GitHub Actions pipeline
-│   └── pull_request_template.md PR template
-├── .claude/
-│   ├── settings.json          Claude Code configuration and hooks
-│   └── build-unblocked        Unblock the build gate (not checked in)
-├── docs/
-│   └── sbom.md                Software bill of materials
-├── SECURITY.md                Security contact and reporting
-├── CLAUDE.md                  Guidance for Claude Code
-└── intent.md, spec.md, plan.md Project documentation
+├── .github/                   CI workflow and pull request template
+├── .claude/                   Claude Code settings, hooks wiring, the mission-authoring skill
+├── docs/                      SBOM and mission drafts
+├── SECURITY.md, CLAUDE.md
+└── intent.md, spec.md, plan.md
 ```
 
 ## Adding a mission
 
-Each mission is a data file in `js/content/missions/` combined with reusable components in `js/components/`.
+A mission is a data file rendered by reusable components. The format, with every field and component option, is in `.claude/skills/cclab-mission-authoring/references/mission-format.md`.
 
-**To add a new mission:**
+1. Add or check the mission's row (`id`, title, stage, XP) in `js/core/xp.js`, and the level table if levels change.
+2. Create `js/content/missions/mNN-<id>.js` as strict JSON inside `Lab.content.registerMission({ ... })`. Leave `reviewedBy` and `reviewedOn` as `null` for a named human reviewer to fill in (GOV-08), and record every technical claim in `claims` with `verified: null`.
+3. Add the file's `<script defer>` tag to `index.html` and `tests.html`, after the other missions.
+4. Run the validator: `python .claude/skills/cclab-mission-authoring/scripts/validate_mission.py js/content/missions/mNN-<id>.js`.
+5. Open `tests.html` and confirm `RESULT: PASS` (it checks XP totals, explanations, word counts and the level table).
+6. A new component needs a file in `js/components/`, its `Lab.ui.register` call, script tags, and a name in the validator's component list.
 
-1. Reference the skill: [cclab-mission-authoring](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)
-2. Create `js/content/missions/m<num>-<slug>.js` with mission data, beats, and activities
-3. Add the mission id to unlock rules in `js/core/unlock.js`
-4. Add any new nodes to `js/content/system-nodes.js` and edges to `js/content/map-graph.js`
-5. Run tests: open `tests.html` in a browser
-6. CI validates mission data automatically on every pull request
-
-Mission data includes metadata (`id`, `title`, `stage`), beats (explain, show, try, debrief, deeper), and activities with completion rules. A mission should only need new rendering code if it requires a new component type.
+A mission needs new rendering code only if it needs a new component.
 
 ## Development workflow
 
@@ -124,9 +98,12 @@ Mission data includes metadata (`id`, `title`, `stage`), beats (explain, show, t
 ## Building and testing
 
 - **Tests:** Open `tests.html` in a browser or run in CI with headless Chrome. Prints `RESULT: PASS` or `RESULT: FAIL`.
-- **Static checks:** `python tools/static-checks.py` (brand palette, no forbidden APIs or emoji, no console.log in shipped code).
+- **Static checks:** `python tools/static-checks.py` (brand palette, no forbidden APIs, no emoji, the size budget).
+- **Syntax check:** `for f in $(find js tests tools -name '*.js'); do node --check "$f"; done`. CI runs it too.
+- **Hook tests:** `python tools/hooks/test_hooks.py`.
+- **Accessibility audit:** paste `tools/view-audit.js` into the browser console on `index.html` and read the report. It checks every view for headings, landmarks, live regions, names, touch targets and horizontal overflow.
 - **CSP validation:** The `Content-Security-Policy` meta tag is verified in Chrome, Edge, Firefox and Safari from `file://` (spec §17.2 item 11).
-- **Size budget:** Total shipped code (HTML, CSS, JS) must stay under 300 KB uncompressed.
+- **Size budget:** Total shipped code (HTML, CSS, JS) must stay under 400 KB uncompressed (spec §4.6, enforced by `tools/static-checks.py`).
 
 ## Technical decisions
 
@@ -146,14 +123,11 @@ These decisions are deliberate and documented in spec §4. Do not "modernise" wi
 
 ## Brand and accessibility
 
-This project follows the [Nordic Solar brand guidelines](https://nordicsolar.example.com/brand) and WCAG 2.1 AA accessibility standards.
+This project follows the Nordic Solar brand guidelines as captured in the `ns-brand-guidelines` skill and spec §14. The brand owner signs off the result before release (spec §17.2 item 10).
 
 - **Colours:** Nordic Green (#1A5C00), Almost Black (#1C1C1C), Off White (#F4F2EB), White (#FFFFFF), Black text only. No secondary colours, no gradients.
 - **Font:** Aptos only, with system fallbacks. No web fonts.
-- **Icons:** Monochrome inline SVG only.
-- **Keyboard navigation:** All interactions work with keyboard only.
-- **Reduced motion:** Respects `prefers-reduced-motion`.
-
-## License and attribution
-
-This project is proprietary Nordic Solar learning material.
+- **Icons:** Monochrome inline SVG only. State is shown by icon, text label and border style, never by colour alone.
+- **Accessibility:** WCAG 2.2 level AA is the product's own working target (spec §15), not a confirmed company standard.
+- **Keyboard:** Every interaction works with the keyboard only.
+- **Reduced motion:** Respects `prefers-reduced-motion` and an in-app setting.

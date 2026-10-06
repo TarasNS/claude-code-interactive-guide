@@ -140,18 +140,18 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Hooks run deterministic commands around Claude Code tool-use events and can allow, ask or deny an action.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Automate actions with hooks (code.claude.com/docs/en/hooks-guide)"
     },
     {
       "text": "When a hook denies an action, its reason is returned to Claude.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Automate actions with hooks (code.claude.com/docs/en/hooks-guide)"
     },
     {
-      "text": "Hooks can be used to implement approval gates and enforce organisational policy.",
-      "verified": null,
-      "source": null
+      "text": "Hooks can enforce project rules and, with the ask decision, hand an action to a person to approve.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Automate actions with hooks (code.claude.com/docs/en/hooks-guide)"
     }
   ]
 });

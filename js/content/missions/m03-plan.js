@@ -180,13 +180,13 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Plan Mode is an interactive Claude Code mode in which Claude explores a repository and proposes a plan without changing files.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Explore first, then plan, then code (code.claude.com/docs/en/best-practices)"
     },
     {
-      "text": "Plan Mode is most useful for changes that touch shared code, authentication or data; small isolated changes can be done directly.",
-      "verified": null,
-      "source": null
+      "text": "Plan Mode is most useful when the approach is uncertain, the change touches several files, or the code is unfamiliar; small, clear changes can be done directly.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Explore first, then plan, then code (code.claude.com/docs/en/best-practices)"
     }
   ]
 });

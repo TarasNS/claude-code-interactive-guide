@@ -107,7 +107,7 @@
 
     return h('div', null,
       h('h1', null, 'Claude Engineering Lab'),
-      h('h3', null, 'Learn the AI-native software lifecycle with Claude Code, one short mission at a time.'),
+      h('p', { class: 'lead' }, 'Learn the AI-native software lifecycle with Claude Code, one short mission at a time.'),
       h('p', null, 'You work on one fictional project, ClaimsPortal, through 15 missions. XP is awarded only for verified understanding.'),
       actions,
       Lab.ui.simulatedNotice(),

@@ -275,9 +275,24 @@
     });
   });
 
-  T.test('course: every technical claim is still unverified, awaiting the spec 16.4 check', function () {
-    var count = 0;
-    Lab.content.allMissions().forEach(function (m) { m.claims.forEach(function (c) { count += 1; T.eq(c.verified, null, m.id); }); });
-    T.ok(count >= 30, 'there are claims to verify: ' + count);
+  T.test('course: a claim is marked verified only with a date and a named source (spec 16.4)', function () {
+    var total = 0, verified = 0;
+    Lab.content.allMissions().forEach(function (m) {
+      m.claims.forEach(function (c) {
+        total += 1;
+        if (c.verified === null) { T.eq(c.source, null, m.id + ' an unverified claim names no source'); return; }
+        verified += 1;
+        T.ok(/^\d{4}-\d{2}-\d{2}$/.test(c.verified), m.id + ' verified date');
+        T.ok(typeof c.source === 'string' && c.source.length > 10, m.id + ' source');
+      });
+    });
+    T.ok(total >= 30, 'there are claims to check: ' + total);
+    T.ok(verified > 0 && verified < total, 'some claims are verified and the course-methodology ones are not: ' + verified + ' of ' + total);
+  });
+
+  T.test('course: the outbound link is the canonical, verified Claude Code docs URL', function () {
+    var l = Lab.content.link('claude-code-overview');
+    T.eq(l.url, 'https://code.claude.com/docs/en/overview');
+    T.eq(l.verified, '2026-10-06');
   });
 })();

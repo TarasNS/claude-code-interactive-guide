@@ -215,7 +215,7 @@
       var lv = Lab.xp.LEVELS[after - 1];
       active.levelBanner = 'Level ' + after + ' reached: ' + lv.title;
       Lab.coach.say('info', active.levelBanner);
-      var banner = h('div', { class: 'notice level-banner', role: 'status' }, h('strong', null, active.levelBanner));
+      var banner = h('div', { class: 'notice level-banner' }, h('strong', null, active.levelBanner));
       active.beatBox.insertBefore(banner, active.beatBox.firstChild);
     } else {
       Lab.coach.say('info', 'Mission complete.');

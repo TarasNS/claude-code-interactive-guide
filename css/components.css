@@ -344,3 +344,8 @@ button.compare-line { cursor: pointer; min-height: 44px; }
 .sum-criterion[data-covered="false"] { border-style: dashed; }
 .sum-state { font-size: var(--text-xs); letter-spacing: 0.04em; }
 .sum-missions { font-size: var(--text-xs); }
+
+/* Wide blocks scroll inside their own container, never the page (spec 5.2) */
+.classifier > *, .builder > *, .flagger > *, .choice > *, .terminal, .term-panel, .stepper > * { min-width: 0; }
+.cl-context, .cl-artifact { max-width: 100%; min-width: 0; }
+.cl-context-text, .cl-artifact-text { max-width: 100%; overflow-x: auto; }

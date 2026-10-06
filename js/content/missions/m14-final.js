@@ -97,9 +97,9 @@ Lab.content.registerMission({
   "links": [],
   "claims": [
     {
-      "text": "Rules that must always hold should be enforced with a deterministic Hook rather than recommended in a Skill.",
-      "verified": null,
-      "source": null
+      "text": "Instructions in CLAUDE.md are context, not enforcement, so a rule that must always hold needs a deterministic hook.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, How Claude remembers your project (code.claude.com/docs/en/memory); Claude Code docs, Best practices, Set up hooks (code.claude.com/docs/en/best-practices)"
     }
   ]
 });

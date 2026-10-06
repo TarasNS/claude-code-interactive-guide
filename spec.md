@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.0 (draft for engineering hand-over) |
+| **Version** | 2.1 (draft; build amendments recorded) |
 | **Status** | Draft. Not approved. See §20 for the approvals required before build starts. |
 | **Derived from** | [intent.md](intent.md) |
 | **Product** | Interactive, gamified, browser-based tutorial on building software with Claude Code |
@@ -20,6 +20,7 @@
 |---|---|---|
 | 1.0 | 2026-10-06 | First specification from `intent.md`. |
 | 2.0 | 2026-10-06 | Applied Nordic Solar brand guidelines, the Information and IT Security Policy, the Company Rules on Secure Software Development and the Company Rules on Artificial Intelligence. Rewrote §14 (visual design) to the brand palette. Added requirement IDs, §19 (compliance and concerns), §20 (delivery governance) and §22 (open decisions). Removed all emoji and colour-only state indicators. Recorded decision D-03 (repository stays where it is). Incorporated an independent content review: aligned concern severities with decision deadlines, defined tints and allowed text colours, made the automated checks testable (§17.1), and added the sign-off table (§20.4), the staging-host decision (D-11) and the policy-review decision (D-12). |
+| 2.1 | 2026-10-06 | Build amendments, approved by the document owner's delegate during the build (see plan.md §3): the size budget in §4.6 is 400 KB (the built product is about 370 KB); activity records may hold a `hints` count (§6.2); Mission 7's *How many agents?* uses one shared option list, so XP decay applies to the whole activity (§9.10); the pattern gallery gains an optional zero-XP practice (§9.8); the final challenge lets the learner accept a workflow with problems for the partial score and defines how each rule is checked (§9.17); the Journey summary's `intent.md` is fixed scenario text (§9.18). |
 
 **How to read this document**
 
@@ -170,7 +171,7 @@ Latest two versions of Chrome, Edge, Firefox, Safari and iOS Safari. Must work f
 
 ### 4.6 Performance budget
 
-- Total shipped code (HTML, CSS, JS) under **300 KB uncompressed**, no images other than inline SVG.
+- Total shipped code (HTML, CSS, JS) under **400 KB uncompressed**, no images other than inline SVG. (The v2.0 figure of 300 KB did not allow for 15 missions of content; see the change log. Enforced by `tools/static-checks.py`.)
 - Landing view interactive in under 1 second from local disk on a mid-range laptop.
 - Animations use `transform` and `opacity` only. No layout thrash in loops.
 
@@ -1268,7 +1269,7 @@ Build starts when: GOV-01 to GOV-07 and GOV-12 to GOV-14 are done; open decision
 |---|---|---|---|---|
 | D-01 | Supply the official logo asset and its clear-space rule; confirm whether a licensed Aptos web font may be self-hosted | Brand owner (asset); Head of IT & Digitalization (font licence) | Before release | Empty logo slot; Aptos from the device only |
 | D-02 | Is Claude Code an approved AI coding tool, on what terms, and may this spec and the fictional content be processed by it? | Head of IT & Digitalization, CPIO | **Before build** | None. Build does not start until decided. |
-| D-03 | Repository location: move to a company-controlled organisation, or accept the current one in writing | Head of IT & Digitalization | **Decided 2026-10-06** | **Decided:** the repository stays where it is (private repository `TarasNS/claude-code-interactive-guide`). Recorded by the project requester on 2026-10-06; the Head of IT & Digitalization countersigns in §20.4. |
+| D-03 | Repository location: move to a company-controlled organisation, or accept the current one in writing | Head of IT & Digitalization | **Decided 2026-10-06** | **Decided:** the repository stays where it is (private repository `TarasNS/claude-code-interactive-guide`). Recorded by the project requester on 2026-10-06; the Head of IT & Digitalization countersigns in §20.4. **Update 2026-10-06:** the repository was later made public so GitHub code scanning (CodeQL) could run. The Head of IT & Digitalization must re-confirm the location in §20.4 with that in mind, because the specification, plan and governance documents are now publicly readable. |
 | D-04 | Change approval at release level, or per change; delegation | Head of IT & Digitalization | **Before build** | None. Proposed: approval of spec and plan, then per release. |
 | D-05 | Should the product count towards AI literacy training (a new intent would be needed for records)? Confirm the product is not an AI system for the AI inventory | CPIO | Before release | Not counted (GOV-11) |
 | D-06 | May a secondary colour (for example the brand's red) mark failures? | Brand owner | No deadline | No (BRD-07) |

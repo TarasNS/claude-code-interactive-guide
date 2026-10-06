@@ -129,3 +129,6 @@ select, textarea, input:not([type="radio"]):not([type="checkbox"]) {
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+.lead { font-size: var(--text-m); max-width: 60ch; }
+summary { cursor: pointer; padding-block: var(--space-3); }

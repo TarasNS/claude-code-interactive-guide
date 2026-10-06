@@ -251,7 +251,7 @@ Lab.content.registerMission({
       "heading": "You wrote a Skill description, and you can keep it",
       "simple": "Skills work across Claude.ai, Claude Code and the API, but this course uses them in Claude Code. What you wrote is the part that decides when Claude loads the Skill. Download it inside a complete SKILL.md.",
       "notes": [
-        "To share a Skill, put its folder in the Claude Code skills directory, keep it in the repository so the whole team gets it, or ask an organisation admin to deploy it. Skills follow an open standard called Agent Skills."
+        "To share a Skill, put its folder in the Claude Code skills directory, keep it in the repository so the whole team gets it, or ask an organisation admin to deploy it. Skills follow an open standard called Agent Skills. Features that only Claude Code has do not carry over to other places."
       ],
       "download": "skill-md",
       "humanDecides": "Which kinds of work deserve a Skill, and what its description promises.",
@@ -262,33 +262,33 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "A Skill is a folder containing a SKILL.md file, with optional scripts, references and assets folders.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic), file structure"
     },
     {
       "text": "The file must be named exactly SKILL.md, the folder name is kebab-case, and frontmatter is wrapped in a pair of --- lines.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic), critical rules and troubleshooting"
     },
     {
-      "text": "The description lives in frontmatter that is always in context, so it must not contain angle brackets and is limited to 1024 characters.",
-      "verified": null,
-      "source": null
+      "text": "The description lives in frontmatter that is always in Claude's context, so the guide says it must stay under 1024 characters and contain no angle brackets. Claude Code also truncates the combined description and when_to_use text at 1,536 characters in its skill listing.",
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic), field requirements; Claude Code docs, Extend Claude with skills (code.claude.com/docs/en/skills)"
     },
     {
       "text": "Skills load progressively: the description is always loaded, the body when relevant, and linked files only when needed.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic), progressive disclosure"
     },
     {
       "text": "Skills can be placed in the Claude Code skills directory, committed in a repository, or deployed by an organisation admin, and follow the open Agent Skills standard.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic), distribution and sharing; Claude Code docs, Extend Claude with skills (code.claude.com/docs/en/skills)"
     },
     {
-      "text": "Skills work across Claude.ai, Claude Code and the API.",
-      "verified": null,
-      "source": null
+      "text": "Skills work across Claude.ai, Claude Code and the API, but fields and features specific to Claude Code do not carry over.",
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic); Claude Code docs, Extend Claude with skills (code.claude.com/docs/en/skills)"
     }
   ]
 });

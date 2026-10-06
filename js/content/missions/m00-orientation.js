@@ -121,7 +121,7 @@ Lab.content.registerMission({
             "id": "skills",
             "text": "Skills",
             "answer": "Works in both",
-            "explanation": "The same Skill can be used in Claude Code and through the API."
+            "explanation": "A Skill built to the open Agent Skills standard can be used in Claude Code and through the API."
           }
         ]
       }
@@ -141,18 +141,18 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Claude Code is interactive work in a repository; the API is programmatic access from applications or pipelines.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Overview and Best practices, Run non-interactive mode (code.claude.com/docs/en/overview)"
     },
     {
-      "text": "CLAUDE.md is read by Claude Code; it is not used in API calls.",
-      "verified": null,
-      "source": null
+      "text": "CLAUDE.md is read by Claude Code at the start of every session.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, How Claude remembers your project (code.claude.com/docs/en/memory)"
     },
     {
-      "text": "Skills work in both Claude Code and the API.",
-      "verified": null,
-      "source": null
+      "text": "A Skill built to the Agent Skills standard works in Claude Code, claude.ai and the API, but features specific to Claude Code do not carry over.",
+      "verified": "2026-10-06",
+      "source": "The Complete Guide to Building Skills for Claude (Anthropic); Claude Code docs, Extend Claude with skills (code.claude.com/docs/en/skills)"
     }
   ]
 });

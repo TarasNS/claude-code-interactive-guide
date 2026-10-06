@@ -150,13 +150,13 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Claude Code reads CLAUDE.md at the start of a session in the repository.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, How Claude remembers your project (code.claude.com/docs/en/memory)"
     },
     {
-      "text": "CLAUDE.md holds repository-wide commands, conventions, rules and known mistakes, not task-specific direction.",
-      "verified": null,
-      "source": null
+      "text": "CLAUDE.md holds commands, code style, workflow rules and common gotchas that apply broadly; information that changes often does not belong in it.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Write an effective CLAUDE.md (code.claude.com/docs/en/best-practices)"
     }
   ]
 });

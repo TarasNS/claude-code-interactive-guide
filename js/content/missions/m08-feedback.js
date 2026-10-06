@@ -226,13 +226,13 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Giving Claude a way to run tests and a build and read the results lets it detect and fix its own mistakes before human review.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Give Claude a way to verify its work (code.claude.com/docs/en/best-practices)"
     },
     {
       "text": "A feedback loop and a verifier subagent are different checks and complement each other.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Give Claude a way to verify its work (code.claude.com/docs/en/best-practices)"
     }
   ]
 });

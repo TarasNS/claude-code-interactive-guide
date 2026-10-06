@@ -93,8 +93,8 @@ Lab.content.registerMission({
   "claims": [
     {
       "text": "Subagents are scoped helpers inside one Claude Code task, while parallel sessions are independent sessions that can each use their own git worktree.",
-      "verified": null,
-      "source": null
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Subagents (code.claude.com/docs/en/sub-agents); Claude Code docs, Best practices, Run multiple Claude sessions (code.claude.com/docs/en/best-practices)"
     },
     {
       "text": "Adding agents adds coordination and context overhead, so a single agent is the default for a single task.",

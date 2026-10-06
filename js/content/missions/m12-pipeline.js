@@ -142,9 +142,9 @@ Lab.content.registerMission({
   "links": [],
   "claims": [
     {
-      "text": "In CI, Claude usually runs unattended through non-interactive use such as the command line, an SDK or the API.",
-      "verified": null,
-      "source": null
+      "text": "In CI, Claude Code can run non-interactively (claude -p, GitHub Actions, GitLab CI/CD or the Agent SDK), so a pipeline can use it unattended.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Overview and Best practices, Run non-interactive mode (code.claude.com/docs/en/overview)"
     },
     {
       "text": "A failed health check after deployment should trigger a rollback before any fix is pushed forward.",

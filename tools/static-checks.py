@@ -40,6 +40,8 @@ FORBIDDEN_CODE = [
 STYLE_ATTR_RE = re.compile(r"""<[^>]+\sstyle\s*=""", re.I)
 EXTERNAL_REF_RE = re.compile(r"""<(?:script|link)\b[^>]*\b(?:src|href)\s*=\s*["']?(?:https?:)?//""", re.I)
 
+SIZE_BUDGET_KB = 400  # spec 4.6 (amended in spec v2.1)
+
 EMOJI_RANGES = [(0x1F000, 0x1FAFF), (0x2600, 0x27BF), (0x2B00, 0x2BFF), (0xFE0F, 0xFE0F)]
 
 
@@ -111,6 +113,13 @@ def check_emoji(rel, text, errors):
             errors.append(f"{rel}:{line_of(text, i)}: emoji or pictograph U+{cp:04X}")
 
 
+def check_size(files, errors):
+    total = sum(f.stat().st_size for f in files)
+    if total > SIZE_BUDGET_KB * 1024:
+        errors.append(f"total shipped code is {total / 1024:.1f} KB, over the {SIZE_BUDGET_KB} KB budget (spec 4.6)")
+    return total
+
+
 def main():
     errors = []
     files = shipped_files()
@@ -124,12 +133,13 @@ def main():
         code = strip_comments(raw, path.suffix)
         check_palette(rel, code, errors)
         check_forbidden(rel, code, errors)
+    total = check_size(files, errors)
     if errors:
         print("static-checks: FAIL")
         for e in errors:
             print("  " + e)
         return 1
-    print(f"static-checks: PASS ({len(files)} files)")
+    print(f"static-checks: PASS ({len(files)} files, {total / 1024:.1f} KB of {SIZE_BUDGET_KB} KB)")
     return 0
 
 

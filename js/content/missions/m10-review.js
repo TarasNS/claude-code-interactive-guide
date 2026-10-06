@@ -84,9 +84,9 @@ Lab.content.registerMission({
   "links": [],
   "claims": [
     {
-      "text": "An independent AI review can check a pull request for bugs, security issues, plan compliance and policy compliance, and may produce false positives.",
-      "verified": null,
-      "source": null
+      "text": "An independent AI review in a fresh context can check a change for bugs, security issues and compliance with a plan, and will often report gaps even when the work is sound.",
+      "verified": "2026-10-06",
+      "source": "Claude Code docs, Best practices, Add an adversarial review step (code.claude.com/docs/en/best-practices)"
     }
   ]
 });

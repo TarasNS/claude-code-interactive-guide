@@ -88,7 +88,7 @@
       }).join('; ');
     }
 
-    function panelFor(node, missions, explore, explain) {
+    function panelFor(node, missions, explore, explain, titleId) {
       var row = missionRow(node.mission);
       var unlocked = isUnlocked(node, missions, explore);
       var tryIt = unlocked || Lab.unlock.isMissionUnlocked(node.mission, { missions: missions }, explore)
@@ -106,8 +106,8 @@
       fields.forEach(function (f) { dl.push(h('dt', null, f[0])); dl.push(h('dd', null, f[1])); });
       dl.push(h('dt', null, 'Try it'));
       dl.push(h('dd', null, tryIt));
-      return h('section', { class: 'map-panel', 'aria-labelledby': prefix + '-panel-title' },
-        h('h2', { id: prefix + '-panel-title' }, node.label),
+      return h('section', { class: 'map-panel', 'aria-labelledby': titleId },
+        h('h2', { id: titleId }, node.label),
         unlocked ? null : h('p', { class: 'map-locked' }, Lab.ui.icon('lock'), ' Locked. Unlocks after: ' + row.title),
         h('dl', { class: 'map-fields' }, dl)
       );
@@ -204,7 +204,7 @@
         var row = missionRow(n.mission);
         var readable = isReadable(n, graph, missions, explore);
         var body = readable
-          ? panelFor(n, missions, explore, explain)
+          ? panelFor(n, missions, explore, explain, prefix + '-list-' + n.id)
           : h('p', null, 'Unlocks after: ' + row.title);
         return h('li', { class: 'map-list-item', 'data-status': unlocked ? 'unlocked' : 'locked' },
           h('details', null,
@@ -216,7 +216,7 @@
       var panel = null;
       if (sel) {
         panel = isReadable(sel, graph, missions, explore)
-          ? panelFor(sel, missions, explore, explain)
+          ? panelFor(sel, missions, explore, explain, prefix + '-panel-title')
           : h('section', { class: 'map-panel' }, h('h2', null, sel.label), h('p', { class: 'map-locked' }, Lab.ui.icon('lock'), ' Locked. Unlocks after: ' + missionRow(sel.mission).title));
       }
 
