@@ -3,21 +3,21 @@
   var Lab = (window.Lab = window.Lab || {});
 
   var MISSIONS = [
-    { id: 'orientation', n: 0, stage: 'Start', xp: 10 },
-    { id: 'intent', n: 1, stage: 'Plan', xp: 30 },
-    { id: 'spec', n: 2, stage: 'Design', xp: 30 },
-    { id: 'plan', n: 3, stage: 'Build', xp: 40 },
-    { id: 'context', n: 4, stage: 'Build', xp: 30 },
-    { id: 'skills', n: 5, stage: 'Build', xp: 60 },
-    { id: 'hooks', n: 6, stage: 'Build', xp: 30 },
-    { id: 'agents', n: 7, stage: 'Build', xp: 40 },
-    { id: 'feedback', n: 8, stage: 'Test', xp: 30 },
-    { id: 'evals', n: 9, stage: 'Test', xp: 30 },
-    { id: 'review', n: 10, stage: 'Deploy', xp: 30 },
-    { id: 'gates', n: 11, stage: 'Deploy', xp: 30 },
-    { id: 'pipeline', n: 12, stage: 'Deploy', xp: 30 },
-    { id: 'loop', n: 13, stage: 'Maintain', xp: 30 },
-    { id: 'final', n: 14, stage: 'Maintain', xp: 50 }
+    { id: 'orientation', title: 'Claude Code vs API, and the loop', n: 0, stage: 'Start', xp: 10 },
+    { id: 'intent', title: 'Capture the Intent', n: 1, stage: 'Plan', xp: 30 },
+    { id: 'spec', title: 'Turn Intent Into a Specification', n: 2, stage: 'Design', xp: 30 },
+    { id: 'plan', title: 'Plan Before Coding', n: 3, stage: 'Build', xp: 40 },
+    { id: 'context', title: 'Teach Claude About the Repository', n: 4, stage: 'Build', xp: 30 },
+    { id: 'skills', title: 'Skills', n: 5, stage: 'Build', xp: 60 },
+    { id: 'hooks', title: 'Hooks', n: 6, stage: 'Build', xp: 30 },
+    { id: 'agents', title: 'Subagents and Parallel Work', n: 7, stage: 'Build', xp: 40 },
+    { id: 'feedback', title: 'Give Claude a Feedback Loop', n: 8, stage: 'Test', xp: 30 },
+    { id: 'evals', title: 'Evals', n: 9, stage: 'Test', xp: 30 },
+    { id: 'review', title: 'AI PR Review', n: 10, stage: 'Deploy', xp: 30 },
+    { id: 'gates', title: 'Approval Gates', n: 11, stage: 'Deploy', xp: 30 },
+    { id: 'pipeline', title: 'CI/CD', n: 12, stage: 'Deploy', xp: 30 },
+    { id: 'loop', title: 'Close the Loop', n: 13, stage: 'Maintain', xp: 30 },
+    { id: 'final', title: 'Final Challenge', n: 14, stage: 'Maintain', xp: 50 }
   ];
 
   // A level is reached once every mission up to and including `through` is complete.

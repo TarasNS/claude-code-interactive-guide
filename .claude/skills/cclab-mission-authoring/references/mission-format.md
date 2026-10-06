@@ -39,6 +39,8 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
+| `terms` | array of strings | Optional: glossary ids (`js/content/glossary.js`) whose definitions are listed under the text; Deeper mode adds the deeper definition |
+| `notice` | string | Optional on `debrief` beats: `ai-tools` shows the GOV-10 "Using AI tools at Nordic Solar" notice |
 | `activity` | object | Required on `try` beats, see below |
 | `required` | boolean | Default `true`. Set `false` for optional activities; `deeper` beats are never required |
 | `humanDecides` | string | Required on `debrief` beats: what the human still decides |
@@ -50,6 +52,8 @@ Nothing else may appear in the file except a single optional first-line comment 
 |---|---|---|
 | `id` | string | `<missionId>.<name>`, for example `hooks.build` |
 | `maxXp` | integer | From the mission's section in the spec |
+| `prompt` | string | Optional, `choice` only: the legend above the options |
+| `hints` | array of strings | Optional: up to two progressive hints. Without it the component supplies generic hints |
 | `completion` | string | Plain description of the completion rule from the spec, for example `"all items correctly placed"` |
 | `buckets` | array of strings | For classifiers: the bucket labels, in display order |
 | `items` | array | See below; may be empty for activities whose content is in `config` (for example a terminal run) |
@@ -118,3 +122,10 @@ Lab.content.registerMission({
 ```
 
 (The example is shortened: a real Hooks mission has all the beats and both activities from spec §9.9, and its activity XP adds up to 30.)
+
+## Component configuration (Phase 2)
+
+- `classifier`: uses `activity.buckets` and `activity.items`. Optional `config.request` (a quoted request shown above the cards) and `config.artifact` (`{ file, title, sections: [{ heading, bucket }], extra: [{ heading, lines }] }`), which builds a copyable file from the learner's placements once every card is placed. With `buckets: []` the buckets are taken from the items' answers, in order.
+- `compare`: `config.views` is `[{ id, label, heading, lines: [{ id, text, mono, traces: [lineId] }] }]` and `config.legend` names the radio group. A line's `traces` link it to lines in the other view; linking is on when any line has `traces`.
+- `stepper`: `config.nodes` is `[{ id, label, detail }]` and `config.steps` is `[{ caption, reveal: [nodeId], active: nodeId }]`. Nodes reveal cumulatively.
+- `choice`: `activity.items` are the options. An option is the right one when `"answer": "correct"`. Optional `consequence` text is shown as text under a tried option.
