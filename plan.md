@@ -14,7 +14,7 @@ The plan has ten phases. Each phase ends with checks that must pass before the n
 
 **Do**
 
-- Close the "before build" decisions: D-02 (Claude Code approval), D-03 (repository location), D-04 (change approval), D-11 (staging host), D-12 (review of the remaining policies).
+- Close the "before build" decisions: D-02 (Claude Code approval), D-04 (change approval), D-11 (staging host), D-12 (review of the remaining policies). D-03 (repository location) was decided on 2026-10-06: the repository stays where it is.
 - Complete GOV-01 to GOV-07 and GOV-12 to GOV-14: risk assessment, Data Owner, Risma entry, staging environment, document owner, sign-off (spec §20.4).
 - Apply branch protection on `main` (SEC-11) and confirm MFA for every contributor (SEC-10).
 
@@ -27,12 +27,14 @@ The plan has ten phases. Each phase ends with checks that must pass before the n
 | `.github/pull_request_template.md` | AI-assistance disclosure and named human reviewer (SEC-19) |
 | `.github/workflows/ci.yml` | SAST (CodeQL for JavaScript), secret scan, "no dependency manifest" check; every action pinned to a commit SHA (SEC-12) |
 | `docs/sbom.md` | Runtime dependencies: none; build dependencies: the pinned CI actions (SEC-14) |
+| `.claude/settings.json`, `tools/hooks/` | Six Claude Code hooks (build gate, push guard, secrets guard, brand and code check, mission validator, no dependencies) and their offline tests. Already in place; see `tools/hooks/README.md` |
 
 **Exit checks**
 
 - A test pull request triggers CI and every job passes.
 - A direct push to `main` is rejected.
-- D-02, D-03, D-04, D-11 and D-12 are recorded as decided, and spec §20.4 is signed.
+- D-02, D-04, D-11 and D-12 are recorded as decided, MFA is confirmed for every contributor (GOV-07), and spec §20.4 is signed.
+- A person creates and commits `.claude/build-unblocked`, which opens the build gate hook (H1). Until then, product code cannot be written.
 
 ### Phase 1 — Foundations
 
@@ -174,7 +176,7 @@ The plan has ten phases. Each phase ends with checks that must pass before the n
 
 | Decision | Blocks | If late |
 |---|---|---|
-| D-02 Claude Code approval, D-03 repository location, D-04 change approval, D-11 staging host, D-12 policy review | Phase 1 onward | Nothing starts. The fallback is to build without Claude Code, which still needs the other four. |
+| D-02 Claude Code approval, D-04 change approval, D-11 staging host, D-12 policy review | Phase 1 onward | Nothing starts. The fallback is to build without Claude Code, which still needs the other three. |
 | D-07 hosting | Phase 9 | Ship for local `file://` use only. Spec §19.3 C-08 records the weaker security posture of that mode. |
 | D-01 logo asset and Aptos licence | Phase 8 brand sign-off | Release with an empty logo slot and a system-font fallback (BRD-05, BRD-10). |
 | D-05 AI literacy, D-08 language, D-09 privacy | Phase 9 | D-05 and D-08 use the defaults in spec §22; D-09 has no default, so release waits. |

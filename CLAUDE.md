@@ -14,7 +14,7 @@ The repository is still at the documents stage. There is **no application code y
 
 Change them in that order. A product change that contradicts `intent.md` needs the intent updated first. A behaviour change needs `spec.md` updated before code.
 
-**Build is blocked** until the "before build" decisions in spec §22 are closed. Two of them concern this very tool: whether Claude Code is an approved AI coding tool at Nordic Solar (D-02), and whether this repository's location is acceptable (D-03). Spec §19.3 explains why. Do not start writing product code while they are open.
+**Build is blocked** until the "before build" decisions in spec §22 are closed and MFA is confirmed for every contributor (GOV-07). One of the open decisions concerns this very tool: whether Claude Code is an approved AI coding tool at Nordic Solar (D-02). Spec §19.3 explains why. Do not start writing product code while they are open.
 
 ## Planned architecture (spec §4)
 
@@ -57,8 +57,20 @@ When code exists, tests run by opening `tests.html` in a browser (spec §17.1). 
 - Each mission file records its human content reviewer (`reviewedBy`, `reviewedOn`).
 - Technical claims about Claude Code features must be checked against current docs before release (spec §16.4).
 
+## Hooks that guard this repository
+
+Six hooks in `.claude/settings.json` (scripts in `tools/hooks/`, details in its README) enforce the rules that must always hold. If one blocks you, do not look for a way round it. Read the message, and ask the owner if the rule itself seems wrong.
+
+- **Build gate (H1):** `index.html`, `css/` and `js/` cannot be written until a person creates `.claude/build-unblocked`. Never create it yourself. Mission drafts go in `docs/mission-drafts/`.
+- **Push guard (H2):** no pushes to or from `main`, no force pushes, no `--no-verify`.
+- **Secrets guard (H3):** prompts and file writes containing credentials are blocked.
+- **Brand and code check (H4)** and **mission validator (H5):** run after edits and report problems for you to fix.
+- **No dependencies (H6):** package installs and download-and-run commands are blocked.
+
+After changing a hook, run `python tools/hooks/test_hooks.py`.
+
 ## Repository conventions
 
 - Work on a branch and open a pull request to `main`.
 - `The-Complete-Guide-to-Building-Skill-for-Claude.pdf` is a third-party document kept for reference. Leave it untracked.
-- `spec.md` refers to internal Nordic Solar policies by name and section. Do not paste policy text into the repository. The repository is on a personal GitHub account, so confirm with the owner before pushing policy-derived content.
+- `spec.md` refers to internal Nordic Solar policies by name and section. Do not paste policy text into the repository. The repository's location on a personal GitHub account was accepted on 2026-10-06 (spec D-03).
