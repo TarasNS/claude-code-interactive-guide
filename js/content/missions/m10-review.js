@@ -74,6 +74,19 @@ Lab.content.registerMission({
       }
     },
     {
+      "type": "deeper",
+      "heading": "A review policy lives in the repository",
+      "deeper": "Teams write the review policy down in a file at the repository root, so the reviewer and the humans share one standard. Findings help people decide. They never approve or block a pull request by themselves.",
+      "cards": [
+        { "title": "Passes", "text": "Split the review into passes, such as bugs, security, and compliance with the spec and the plan, and tag each finding with its pass." },
+        { "title": "What counts as Important", "text": "Say that Important means breaking behaviour, leaking data or breaching policy. Style and naming are nits, and the number of nits is capped." },
+        { "title": "What to skip", "text": "List generated files and anything the pipeline already enforces, so attention goes only where a review adds value." },
+        { "title": "The human threshold", "text": "A code owner still approves. A team that wants to gate merges on findings can read the severity counts the review publishes." },
+        { "title": "The fix loop", "text": "A reviewer tags Claude on a comment, Claude addresses it and pushes the change, and the thread records both the request and the fix." },
+        { "title": "Learning from review", "text": "When the same mistake is flagged twice, the correction goes into CLAUDE.md, so the next review catches it sooner." }
+      ]
+    },
+    {
       "type": "debrief",
       "heading": "AI review reduces what a person has to find",
       "simple": "AI review does not replace human approval. It clears away the mechanical findings so a person can spend attention on intent and risk, where judgment matters most.",
@@ -87,6 +100,26 @@ Lab.content.registerMission({
       "text": "An independent AI review in a fresh context can check a change for bugs, security issues and compliance with a plan, and will often report gaps even when the work is sound.",
       "verified": "2026-10-06",
       "source": "Claude Code docs, Best practices, Add an adversarial review step (code.claude.com/docs/en/best-practices)"
+    },
+    {
+      "text": "AI review findings do not approve or block a pull request on their own; branch protection still requires a code owner to approve.",
+      "verified": "2026-10-06",
+      "source": "Anthropic SDLC playbook, PR review play (text supplied by the project owner on 2026-10-06; not independently fetched)"
+    },
+    {
+      "text": "A review policy file at the repository root sets the review passes, what counts as Important rather than a nit, and what to skip.",
+      "verified": "2026-10-06",
+      "source": "Anthropic SDLC playbook, PR review play (text supplied by the project owner on 2026-10-06; not independently fetched)"
+    },
+    {
+      "text": "When a reviewer tags Claude on a review comment, Claude addresses it and pushes the fix, and the thread records both.",
+      "verified": "2026-10-06",
+      "source": "Anthropic SDLC playbook, PR review play (text supplied by the project owner on 2026-10-06; not independently fetched)"
+    },
+    {
+      "text": "When a review flags the same mistake twice, the correction is added to CLAUDE.md so later reviews catch it.",
+      "verified": "2026-10-06",
+      "source": "Anthropic SDLC playbook, PR review play (text supplied by the project owner on 2026-10-06; not independently fetched)"
     }
   ]
 });

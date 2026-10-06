@@ -24,7 +24,7 @@ State of the build against `plan.md` and spec §17, as of 2026-10-06. "Checked" 
 | 2 to 7 | Each phase's listed checks | Checked by tests, and by a scripted perfect run of all 15 missions through the real interface: exactly 500 XP, level 11, all 23 success criteria covered |
 | 8 | Accessibility, responsive and reduced-motion pass | Checked: `tools/view-audit.js` over all 80 views at desktop and 320 px found four problems, all fixed; reduced motion removes Play, speed and animation. **Owed:** a screen reader, and a real touch device. |
 | 8 | Total code size under the budget | Checked. The budget was amended from 300 to 400 KB (spec 4.6, v2.1) because the content-complete product is about 372 KB. |
-| 8 | Technical claims verified (spec 16.4) | 22 of 31 recorded with date and source; see below |
+| 8 | Technical claims verified (spec 16.4) | 26 of 35 recorded with date and source; see below |
 | 8 | Content review recorded in every mission file (GOV-08) | **Owed:** `reviewedBy` and `reviewedOn` are null in all 15 mission files, on purpose |
 | 8 | Brand compliance review by the brand owner | **Owed** (spec 17.2 item 10) |
 | 9 | Header check, DAST, independent security test, system approval test, release approval | **Owed.** `tools/check-headers.py` is ready for the header check; it needs a staging URL (decision D-11). |

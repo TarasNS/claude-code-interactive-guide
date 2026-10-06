@@ -6,6 +6,9 @@
   // x, y are the node centre in a 800 x 460 coordinate space.
   // The edge set below is derived from the course's teaching order and is NOT yet
   // checked against the official playbook (spec 10.2, verification required).
+  // Partial evidence (PR review play, 2026-10-06): its prerequisites are an updated CLAUDE.md, Skills
+  // where policies are enforced, and defined subagents. The map has no edge from claude-md, skills or
+  // subagents to pr-review yet; add dotted edges if the owner agrees.
   Lab.content.mapGraph = {
     verified: null,
     source: null,

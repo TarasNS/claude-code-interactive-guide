@@ -95,6 +95,7 @@
     s.setSetting('explore', true);
     var made = Lab.ui.map.create({ store: s });
     var el = mounted(made);
+    el.querySelector('.map-graph').style.setProperty('display', 'block', 'important');
     var intent = el.querySelector('.map-svg [data-node="intent"]');
     intent.focus();
     intent.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
