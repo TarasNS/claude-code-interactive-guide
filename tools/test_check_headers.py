@@ -63,6 +63,36 @@ class PureChecks(unittest.TestCase):
         self.assertEqual(ch.check(without("Strict-Transport-Security"), "http"), [])
 
 
+mk_spec = importlib.util.spec_from_file_location("make_header_config", Path(__file__).resolve().parent / "make-header-config.py")
+mk = importlib.util.module_from_spec(mk_spec)
+mk_spec.loader.exec_module(mk)
+
+
+class SinglePolicy(unittest.TestCase):
+    def test_the_policy_file_passes_the_checker(self):
+        self.assertEqual(ch.check(mk.POLICY), [])
+
+    def test_the_policy_file_matches_the_test_fixture(self):
+        self.assertEqual(mk.POLICY, GOOD)
+
+    def test_every_format_carries_every_header_and_value(self):
+        for fmt in ("nginx", "netlify", "azure-swa", "json"):
+            out = mk.render(fmt)
+            for name, value in mk.POLICY.items():
+                self.assertIn(name, out, fmt)
+                self.assertIn(value.replace('"', '\\"') if fmt == "nginx" else value.replace('"', '\\"') if fmt in ("azure-swa", "json") else value, out, fmt + " " + name)
+
+    def test_azure_and_json_output_parse_back_to_the_policy(self):
+        import json
+        self.assertEqual(json.loads(mk.render("azure-swa"))["globalHeaders"], mk.POLICY)
+        self.assertEqual(json.loads(mk.render("json")), mk.POLICY)
+
+    def test_unknown_format_is_rejected(self):
+        with self.assertRaises(ValueError):
+            mk.render("apache")
+        self.assertEqual(mk.main(["x", "apache"]), 2)
+
+
 class Handler(http.server.BaseHTTPRequestHandler):
     headers_to_send = GOOD
 

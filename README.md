@@ -62,6 +62,9 @@ Running from `file://` (direct file access) offers a weaker security posture tha
 ├── tools/
 │   ├── static-checks.py       CI script: palette, forbidden code, emoji, size budget
 │   ├── view-audit.js          Accessibility audit to paste into a browser console
+│   ├── headers.json           The SEC-08 response-header policy (single source of truth)
+│   ├── make-header-config.py  Print that policy for nginx, Netlify/Cloudflare or Azure Static Web Apps
+│   ├── check-headers.py       Check a staging or production URL against the policy (SEC-08, SEC-13)
 │   └── hooks/                 Claude Code hooks (build gate, push guard, etc.)
 ├── .github/                   CI workflow and pull request template
 ├── .claude/                   Claude Code settings, hooks wiring, the mission-authoring skill
@@ -100,7 +103,8 @@ A mission needs new rendering code only if it needs a new component.
 - **Tests:** Open `tests.html` in a browser or run in CI with headless Chrome. Prints `RESULT: PASS` or `RESULT: FAIL`.
 - **Static checks:** `python tools/static-checks.py` (brand palette, no forbidden APIs, no emoji, the size budget).
 - **Syntax check:** `for f in $(find js tests tools -name '*.js'); do node --check "$f"; done`. CI runs it too.
-- **Hook tests:** `python tools/hooks/test_hooks.py`.
+- **Hook and header-tool tests:** `python tools/hooks/test_hooks.py` and `python tools/test_check_headers.py`.
+- **Hosting headers:** `python tools/make-header-config.py nginx|netlify|azure-swa` prints the configuration for the host chosen in D-07 and D-11; `python tools/check-headers.py https://<host>/` verifies it.
 - **Accessibility audit:** paste `tools/view-audit.js` into the browser console on `index.html` and read the report. It checks every view for headings, landmarks, live regions, names, touch targets and horizontal overflow.
 - **CSP validation:** The `Content-Security-Policy` meta tag is verified in Chrome, Edge, Firefox and Safari from `file://` (spec §17.2 item 11).
 - **Size budget:** Total shipped code (HTML, CSS, JS) must stay under 400 KB uncompressed (spec §4.6, enforced by `tools/static-checks.py`).

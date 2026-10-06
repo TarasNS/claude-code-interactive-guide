@@ -14,9 +14,9 @@
     return made.el;
   }
 
-  T.test('map: graph has the 13 nodes and 16 edges from spec 10, with valid references', function () {
+  T.test('map: graph has the 13 nodes and 17 edges from spec 10.2, with valid references', function () {
     T.eq(graph.nodes.length, 13);
-    T.eq(graph.edges.length, 16);
+    T.eq(graph.edges.length, 17);
     var ids = graph.nodes.map(function (n) { return n.id; });
     T.eq(ids.length, new Set(ids).size);
     graph.edges.forEach(function (e) {
@@ -29,8 +29,22 @@
     });
   });
 
-  T.test('map: the edge set is recorded as unverified until checked against the playbook', function () {
-    T.eq(graph.verified, null);
+  T.test('map: the edge set is recorded as checked against the playbook, with a date and source', function () {
+    T.eq(graph.verified, '2026-10-06');
+    T.ok(graph.source.indexOf('playbook') >= 0);
+  });
+
+  T.test('map: the playbook prerequisites are edges, and the unsupported links are gone', function () {
+    function has(a, b) { return graph.edges.some(function (e) { return e.from === a && e.to === b; }); }
+    ['intent>spec', 'claude-md>evals', 'feedback-loop>evals', 'claude-md>pr-review', 'skills>pr-review', 'pr-review>ci-cd', 'approval-gates>ci-cd', 'claude-md>subagents'].forEach(function (k) {
+      var p = k.split('>');
+      T.ok(has(p[0], p[1]), k + ' is a stated prerequisite');
+    });
+    ['claude-md>feedback-loop', 'feedback-loop>ci-cd', 'feedback-loop>pr-review', 'evals>ci-cd', 'subagents>feedback-loop'].forEach(function (k) {
+      var p = k.split('>');
+      T.ok(!has(p[0], p[1]), k + ' has no basis in the playbook');
+    });
+    T.eq(graph.edges.filter(function (e) { return e.to === 'feedback-loop'; }).length, 0, 'the feedback loop has no prerequisites');
   });
 
   T.test('map: edges are drawn from box edge to box edge', function () {
@@ -42,7 +56,7 @@
 
   T.test('map: neighbours list outgoing edges first, then incoming', function () {
     T.eq(Lab.ui.map.neighbors('intent', graph.edges), ['spec', 'monitoring']);
-    T.eq(Lab.ui.map.neighbors('ci-cd', graph.edges), ['monitoring', 'feedback-loop', 'pr-review', 'approval-gates', 'evals']);
+    T.eq(Lab.ui.map.neighbors('ci-cd', graph.edges), ['monitoring', 'pr-review', 'approval-gates']);
   });
 
   T.test('map: panel is readable once a prerequisite node is unlocked', function () {
@@ -78,13 +92,13 @@
     s.setSetting('explore', true);
     var made = Lab.ui.map.create({ store: s });
     var el = mounted(made);
-    el.querySelector('.map-svg [data-node="hooks"]').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    el.querySelector('.map-svg [data-node="ci-cd"]').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     var terms = Array.prototype.map.call(el.querySelectorAll('.map-graph .map-fields dt'), function (d) { return d.textContent; });
     T.eq(terms, ['What it is', 'Why it exists', 'When to use it', 'What it depends on', 'What it enables', 'Example', 'Try it']);
     var dd = el.querySelectorAll('.map-graph .map-fields dd');
-    T.ok(dd[3].textContent.indexOf('Skills (helps, not required)') >= 0, 'dependencies are listed as text with their type');
-    T.ok(dd[4].textContent.indexOf('Approval gates (required)') >= 0);
-    T.ok(el.querySelector('.map-graph .map-fields a').getAttribute('href') === '#/m/hooks');
+    T.ok(dd[3].textContent.indexOf('PR review (required)') >= 0 && dd[3].textContent.indexOf('Approval gates (required)') >= 0, 'dependencies are listed as text with their type');
+    T.ok(dd[4].textContent.indexOf('Monitoring (required)') >= 0);
+    T.ok(el.querySelector('.map-graph .map-fields a').getAttribute('href') === '#/m/pipeline');
     T.ok(el.querySelector('.map-edge-solid'));
     T.ok(el.querySelector('.map-edge-dotted'));
     el.parentNode.removeChild(el);

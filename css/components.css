@@ -349,3 +349,5 @@ button.compare-line { cursor: pointer; min-height: 44px; }
 .classifier > *, .builder > *, .flagger > *, .choice > *, .terminal, .term-panel, .stepper > * { min-width: 0; }
 .cl-context, .cl-artifact { max-width: 100%; min-width: 0; }
 .cl-context-text, .cl-artifact-text { max-width: 100%; overflow-x: auto; }
+.pg-scroll { max-width: 100%; overflow-x: auto; }
+.pg-table select { max-width: 100%; }

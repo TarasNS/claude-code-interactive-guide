@@ -91,7 +91,8 @@
 
       mount(root, [
         h('p', { class: 'cl-prompt' }, cfg.prompt || 'Choose Allow, Ask or Deny for every cell.'),
-        h('table', { class: 'pg-table' }, h('caption', { class: 'sr-only' }, 'Policy for each action in each environment'), h('thead', null, head), h('tbody', null, rows)),
+        h('div', { class: 'pg-scroll', tabindex: '0', role: 'region', 'aria-label': 'Policy table, scrolls sideways on a narrow screen' },
+          h('table', { class: 'pg-table' }, h('caption', { class: 'sr-only' }, 'Policy for each action in each environment'), h('thead', null, head), h('tbody', null, rows))),
         h('button', { type: 'button', class: 'btn btn-primary', 'aria-disabled': state.solved ? 'true' : null, onclick: check }, state.solved ? 'Done' : 'Check my policy'),
         problems
       ]);

@@ -722,26 +722,27 @@ Nodes: `intent`, `spec`, `plan-mode`, `claude-md`, `skills`, `hooks`, `subagents
 
 Edges point from prerequisite to dependent. **Solid** means strong dependency; **dotted** means "helps but is not required".
 
-| From | To | Type |
-|---|---|---|
-| intent | spec | solid |
-| spec | plan-mode | dotted |
-| claude-md | skills | dotted |
-| claude-md | feedback-loop | dotted |
-| skills | hooks | dotted |
-| subagents | feedback-loop | dotted |
-| feedback-loop | evals | solid |
-| feedback-loop | hooks | dotted |
-| feedback-loop | pr-review | dotted |
-| hooks | approval-gates | solid |
-| feedback-loop | ci-cd | solid |
-| pr-review | ci-cd | solid |
-| approval-gates | ci-cd | solid |
-| evals | ci-cd | dotted |
-| ci-cd | monitoring | solid |
-| monitoring | intent | dotted (closes the loop) |
+| From | To | Type | Basis |
+|---|---|---|---|
+| intent | spec | solid | Stated: spec.md needs `intent.md` |
+| spec | plan-mode | dotted | Stated: plan needs the intent or spec, if one exists |
+| claude-md | plan-mode | dotted | Stated: `CLAUDE.md` helps |
+| claude-md | skills | dotted | Stated: having a `CLAUDE.md` helps |
+| claude-md | subagents | solid | Stated: all sessions read `CLAUDE.md` |
+| feedback-loop | subagents | dotted | Stated: the feedback loop also helps |
+| claude-md | evals | solid | Stated |
+| feedback-loop | evals | solid | Stated |
+| claude-md | pr-review | solid | Stated: an updated `CLAUDE.md` |
+| skills | pr-review | dotted | Stated: skills if the review enforces policies |
+| hooks | approval-gates | solid | This spec: approval gates are built with hooks |
+| pr-review | ci-cd | solid | Stated |
+| approval-gates | ci-cd | solid | Stated: hooks as approval gates |
+| ci-cd | monitoring | solid | Stated: a rollback path for CI/CD |
+| pr-review | monitoring | solid | Stated |
+| approval-gates | monitoring | solid | Stated: hooks as an action boundary |
+| monitoring | intent | dotted | This spec: closes the loop |
 
-> **Verification required.** This edge set is derived from the intent and the course's teaching order. Before release it must be checked against the official playbook's dependency diagram and corrected. The data lives in one file (`map-graph.js`) so corrections are one-line changes.
+> **Verified 2026-10-06** against the prerequisites the Anthropic AI-native SDLC playbook lists for each play (claude.com/blog/the-ai-native-sdlc-playbook), which says "the arrows pointing into it are the plays to adopt before it." The v2.0 set had seven links with no basis in the playbook (for example, `CLAUDE.md` or subagents as prerequisites of the feedback loop, which has none) and lacked several stated prerequisites. The data lives in one file (`map-graph.js`) with a basis comment on each edge. Re-check it when the playbook is revised.
 
 ### 10.3 Behaviour
 

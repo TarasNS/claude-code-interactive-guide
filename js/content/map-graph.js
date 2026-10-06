@@ -4,14 +4,9 @@
   Lab.content = Lab.content || {};
 
   // x, y are the node centre in a 800 x 460 coordinate space.
-  // The edge set below is derived from the course's teaching order and is NOT yet
-  // checked against the official playbook (spec 10.2, verification required).
-  // Partial evidence (PR review play, 2026-10-06): its prerequisites are an updated CLAUDE.md, Skills
-  // where policies are enforced, and defined subagents. The map has no edge from claude-md, skills or
-  // subagents to pr-review yet; add dotted edges if the owner agrees.
   Lab.content.mapGraph = {
-    verified: null,
-    source: null,
+    verified: '2026-10-06',
+    source: 'Anthropic AI-native SDLC playbook (claude.com/blog/the-ai-native-sdlc-playbook), prerequisites by play',
     nodes: [
       { id: 'intent', label: 'intent.md', mission: 'intent', x: 90, y: 50,
         whatItIs: 'A short file that says what you want and why: the problem, the outcome, the limits and what is still unknown.',
@@ -92,23 +87,27 @@
         when: 'Continuously after release.',
         example: 'The error rate of the status endpoint rises, and a new intent is opened.' }
     ],
+    // Edges point from a prerequisite to what depends on it. Checked on 2026-10-06 against the playbook's
+    // "Prerequisites" for each play: stated = a prerequisite the playbook names; spec = a link the spec
+    // defines that the playbook does not state as a prerequisite.
     edges: [
-      { from: 'intent', to: 'spec', type: 'solid' },
-      { from: 'spec', to: 'plan-mode', type: 'dotted' },
-      { from: 'claude-md', to: 'skills', type: 'dotted' },
-      { from: 'claude-md', to: 'feedback-loop', type: 'dotted' },
-      { from: 'skills', to: 'hooks', type: 'dotted' },
-      { from: 'subagents', to: 'feedback-loop', type: 'dotted' },
-      { from: 'feedback-loop', to: 'evals', type: 'solid' },
-      { from: 'feedback-loop', to: 'hooks', type: 'dotted' },
-      { from: 'feedback-loop', to: 'pr-review', type: 'dotted' },
-      { from: 'hooks', to: 'approval-gates', type: 'solid' },
-      { from: 'feedback-loop', to: 'ci-cd', type: 'solid' },
-      { from: 'pr-review', to: 'ci-cd', type: 'solid' },
-      { from: 'approval-gates', to: 'ci-cd', type: 'solid' },
-      { from: 'evals', to: 'ci-cd', type: 'dotted' },
-      { from: 'ci-cd', to: 'monitoring', type: 'solid' },
-      { from: 'monitoring', to: 'intent', type: 'dotted' }
+      { from: 'intent', to: 'spec', type: 'solid' },            // stated: spec.md needs intent.md
+      { from: 'spec', to: 'plan-mode', type: 'dotted' },        // stated: plan needs the intent or spec, if one exists
+      { from: 'claude-md', to: 'plan-mode', type: 'dotted' },   // stated: CLAUDE.md helps
+      { from: 'claude-md', to: 'skills', type: 'dotted' },      // stated: having a CLAUDE.md helps
+      { from: 'claude-md', to: 'subagents', type: 'solid' },    // stated: all sessions read CLAUDE.md
+      { from: 'feedback-loop', to: 'subagents', type: 'dotted' }, // stated: the feedback loop also helps
+      { from: 'claude-md', to: 'evals', type: 'solid' },        // stated: evals need CLAUDE.md
+      { from: 'feedback-loop', to: 'evals', type: 'solid' },    // stated: and the feedback loop
+      { from: 'claude-md', to: 'pr-review', type: 'solid' },    // stated: an updated CLAUDE.md
+      { from: 'skills', to: 'pr-review', type: 'dotted' },      // stated: skills if the review enforces policies
+      { from: 'hooks', to: 'approval-gates', type: 'solid' },   // spec: approval gates are built with hooks
+      { from: 'pr-review', to: 'ci-cd', type: 'solid' },        // stated: Claude in the PR review loop
+      { from: 'approval-gates', to: 'ci-cd', type: 'solid' },   // stated: hooks as approval gates
+      { from: 'ci-cd', to: 'monitoring', type: 'solid' },       // stated: a rollback path for CI/CD
+      { from: 'pr-review', to: 'monitoring', type: 'solid' },   // stated: Claude-accelerated PR reviews
+      { from: 'approval-gates', to: 'monitoring', type: 'solid' }, // stated: hooks as an action boundary
+      { from: 'monitoring', to: 'intent', type: 'dotted' }      // spec: closes the loop (intent.md is the loop's output)
     ]
   };
 })();
