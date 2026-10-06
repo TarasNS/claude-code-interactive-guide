@@ -35,11 +35,14 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `heading` | string | One key message, as a short sentence or phrase |
 | `simple` | string | Plain-English text, at most 60 words. Required except on `deeper` beats |
 | `deeper` | string | Optional extra precision for Go deeper mode, at most 60 words. Required on `deeper` beats |
-| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree` |
+| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab` |
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
 | `terms` | array of strings | Optional: glossary ids (`js/content/glossary.js`) whose definitions are listed under the text; Deeper mode adds the deeper definition |
+| `notes` | array of strings | Optional: extra paragraphs after the text, each at most 60 words |
+| `cards` | array | Optional: `{ title, text }` entries shown as a list, for example a pattern gallery |
+| `download` | string | Optional on `debrief` beats: `skill-md` adds the Download SKILL.md button |
 | `notice` | string | Optional on `debrief` beats: `ai-tools` shows the GOV-10 "Using AI tools at Nordic Solar" notice |
 | `activity` | object | Required on `try` beats, see below |
 | `required` | boolean | Default `true`. Set `false` for optional activities; `deeper` beats are never required |
@@ -129,3 +132,12 @@ Lab.content.registerMission({
 - `compare`: `config.views` is `[{ id, label, heading, lines: [{ id, text, mono, traces: [lineId] }] }]` and `config.legend` names the radio group. A line's `traces` link it to lines in the other view; linking is on when any line has `traces`.
 - `stepper`: `config.nodes` is `[{ id, label, detail }]` and `config.steps` is `[{ caption, reveal: [nodeId], active: nodeId }]`. Nodes reveal cumulatively.
 - `choice`: `activity.items` are the options. An option is the right one when `"answer": "correct"`. Optional `consequence` text is shown as text under a tried option.
+
+## Components added in Phase 4
+
+- `terminal`: replay mode uses `config.script` lines (`who`: `cmd`, `out`, `claude`; optional `status`, `highlight` (tree paths), `turn` to group lines) revealed with Next. Interactive mode uses `config.commands` (`{ id, cmd, aliases, hint, lines, sets, variants: [{ if, lines, sets }] }`) and `config.goal` (`{ flags, sequence }`). `config.tree` is a tree object or the name of a tree in `js/content/repo.js`.
+- `tree`: `config.root` is a tree object or a tree name (`claimsportal`, `skill`); each node has `name`, `type`, `purpose`, `sample`, optional `required` or `optional`.
+- `flagger`: `activity.items` with `answer` of `flaw` or `ok`; `config.questions` (`{ q, a }`) and `config.finish` (`{ label, blocked, success }`).
+- `builder`: `activity.items` with `answer` set to a slot id, or `none` for a distractor that must stay out; `config.slots`, `config.preview`, optional `config.rules` (`{ type: "before", a, b, reason }`).
+- `textlab`: the Skill description lab (spec 9.8.1). No items; the rules live in `js/core/skills-validator.js`.
+- `stepper` also accepts `config.paths` (nodes then carry a `path` id, for side-by-side flows) and per-step `meter: { value, label }`.

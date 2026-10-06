@@ -70,6 +70,10 @@ jobs:
           python tools/static-checks.py
         continue-on-error: false
 
+      - name: Syntax-check every JavaScript file
+        run: |
+          for f in $(find js tests -name '*.js'); do node --check "$f" || exit 1; done
+
   tests:
     name: Browser Tests
     runs-on: ubuntu-latest

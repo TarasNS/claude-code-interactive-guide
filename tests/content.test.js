@@ -4,7 +4,7 @@
   var Lab = window.Lab;
 
   var EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/u;
-  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree'];
+  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree', 'flagger', 'textlab'];
 
   function words(text) {
     return String(text || '').trim().split(/\s+/).filter(Boolean).length;
@@ -18,9 +18,13 @@
     return m.beats.filter(function (b) { return b.type === 'try'; });
   }
 
-  T.test('content: Missions 0 to 2 are registered with ids from the curriculum', function () {
+  function activityBeats(m) {
+    return m.beats.filter(function (b) { return b.activity; });
+  }
+
+  T.test('content: registered missions use ids from the curriculum', function () {
     var ids = Lab.content.allMissions().map(function (m) { return m.id; });
-    T.eq(ids, ['orientation', 'intent', 'spec']);
+    T.eq(ids.slice(0, 3), ['orientation', 'intent', 'spec']);
     eachMission(function (m) {
       var row = Lab.xp.MISSIONS.filter(function (x) { return x.id === m.id; })[0];
       T.ok(row, m.id + ' is in the curriculum');
@@ -40,13 +44,13 @@
   T.test('content: activities have prefixed unique ids, and every item has an explanation', function () {
     var seen = {};
     eachMission(function (m) {
-      tryBeats(m).forEach(function (b) {
+      activityBeats(m).forEach(function (b) {
         var a = b.activity;
         T.ok(a.id.indexOf(m.id + '.') === 0, a.id + ' starts with the mission id');
         T.ok(!seen[a.id], a.id + ' is unique');
         seen[a.id] = true;
-        T.ok(a.maxXp > 0, a.id + ' maxXp');
-        T.ok(a.items.length > 0, a.id + ' has items');
+        T.ok(b.type === 'try' ? a.maxXp > 0 : a.maxXp === 0, a.id + ' maxXp (optional deeper practice awards no XP)');
+        if (b.component !== 'textlab' && b.component !== 'terminal') T.ok(a.items.length > 0, a.id + ' has items');
         var itemIds = {};
         a.items.forEach(function (it) {
           T.ok(!itemIds[it.id], a.id + '/' + it.id + ' unique');
@@ -60,7 +64,7 @@
 
   T.test('content: classifier answers always name one of the buckets', function () {
     eachMission(function (m) {
-      tryBeats(m).filter(function (b) { return b.component === 'classifier'; }).forEach(function (b) {
+      activityBeats(m).filter(function (b) { return b.component === 'classifier'; }).forEach(function (b) {
         var buckets = Lab.ui.classifier.bucketsOf(b.activity);
         T.ok(buckets.length >= 2 && buckets.length <= 5, b.activity.id + ' has 2 to 5 buckets');
         b.activity.items.forEach(function (it) {
@@ -91,7 +95,7 @@
         T.ok(b.heading, m.id + ' beat ' + i + ' heading');
         if (b.type === 'show' || b.type === 'try') T.ok(COMPONENTS.indexOf(b.component) >= 0, m.id + ' beat ' + i + ' component');
         if (b.type === 'try') T.ok(b.activity, m.id + ' beat ' + i + ' activity');
-        if (b.component && b.component !== 'terminal' && b.component !== 'pipeline' && b.component !== 'builder' && b.component !== 'tree') {
+        if (b.component && b.component !== 'pipeline') {
           T.ok(Lab.ui.get(b.component), m.id + ' component ' + b.component + ' is registered');
         }
       });

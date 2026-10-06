@@ -57,7 +57,9 @@
   function proseFor(beat, explain) {
     var out = [];
     if (beat.simple) out.push(h('p', { class: 'beat-text' }, beat.simple));
-    if (explain === 'deeper' && beat.deeper) {
+    if (beat.type === 'deeper' && beat.deeper) {
+      out.push(h('p', { class: 'beat-text' }, beat.deeper));
+    } else if (explain === 'deeper' && beat.deeper) {
       out.push(h('p', { class: 'beat-text beat-deeper' }, h('strong', null, 'Deeper: '), beat.deeper));
     }
     return out;
@@ -75,6 +77,33 @@
     return items.length ? h('dl', { class: 'terms' }, items) : null;
   }
 
+  function extrasFor(beat) {
+    var out = [];
+    (beat.notes || []).forEach(function (n) { out.push(h('p', { class: 'beat-text beat-note' }, n)); });
+    if (beat.cards && beat.cards.length) {
+      var items = [];
+      beat.cards.forEach(function (c) {
+        items.push(h('dt', null, c.title));
+        items.push(h('dd', null, c.text));
+      });
+      out.push(h('dl', { class: 'cards' }, items));
+    }
+    return out;
+  }
+
+  function downloadBlock(beat) {
+    if (beat.download !== 'skill-md') return null;
+    var text = function () { return Lab.skills.buildSkillMd(Lab.store.getSkillDescription() || Lab.skills.START); };
+    var problems = Lab.skills.checkSkillMd(text());
+    return h('div', { class: 'download-box' },
+      h('p', { class: 'beat-text' }, Lab.store.getSkillDescription()
+        ? 'Your description is inside a complete SKILL.md.'
+        : 'You have not written a description yet, so the file uses the vague starting one. Complete the description lab first.'),
+      h('button', { type: 'button', class: 'btn btn-primary', onclick: function () { Lab.ui.textlab.download('SKILL.md', text(), Lab.coach.say); } }, 'Download SKILL.md'),
+      problems.length ? h('p', { class: 'beat-note' }, 'The file has problems: ' + problems.join(', ')) : null
+    );
+  }
+
   function mountComponent(mission, beatIndex, beat, explain) {
     var factory = Lab.ui.get(beat.component);
     if (!factory) return h('p', null, 'This activity type is built in a later phase.');
@@ -87,6 +116,7 @@
       explain: explain,
       done: done,
       initialState: componentState[key] || null,
+      store: Lab.store,
       onState: function (s) { componentState[key] = s; },
       onResult: function (r) { handleResult(mission, beat, r); }
     });
@@ -152,7 +182,12 @@
     if (beat.caption) body.push(h('p', { class: 'beat-caption' }, beat.caption));
     if (beat.simulated) body.push(h('p', { class: 'beat-simulated' }, h('strong', null, 'Simulated'), ' - scripted example, no model is called.'));
     if (beat.component) body.push(mountComponent(mission, s.beat, beat, explain));
-    if (beat.type === 'debrief') body = body.concat(debriefBlock(mission, beat));
+    body = body.concat(extrasFor(beat));
+    if (beat.type === 'debrief') {
+      var dl = downloadBlock(beat);
+      if (dl) body.push(dl);
+      body = body.concat(debriefBlock(mission, beat));
+    }
 
     mount(s.beatBox, [dots(mission, visible, s.beat), h('section', { class: 'beat', 'data-type': beat.type }, body)]);
     if (beat.deeper && beat.type !== 'deeper') Lab.coach.setWhy(beat.deeper);
