@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  sast:
+    name: Static Analysis (CodeQL)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@94e57daf2c7250fada4d37149160336b8f9b2ff0 # v3.26.3
+        with:
+          languages: javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@94e57daf2c7250fada4d37149160336b8f9b2ff0 # v3.26.3
+
+  secrets:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
+        with:
+          fetch-depth: 0
+
+      - name: Secret scan with gitleaks
+        uses: gitleaks/gitleaks-action@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependencies:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
+
+      - name: Check no dependency manifests exist
+        run: |
+          if [ -f package-lock.json ] || [ -f poetry.lock ]; then
+            echo "ERROR: Dependency manifest found. This project must not have dependencies (spec SEC-12)."
+            exit 1
+          fi
+          echo "✓ No dependency manifests found"
+
+  brand-and-code:
+    name: Brand Compliance & Static Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
+
+      - name: Set up Python
+        uses: actions/setup-python@f677139bbe7f9c59b41e7462f20cc37da61f0c9d # v5.2.0
+        with:
+          python-version: '3.x'
+
+      - name: Run static checks
+        run: |
+          python tools/static-checks.py
+        continue-on-error: false
+
+  tests:
+    name: Browser Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
+
+      - name: Set up Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-browser-l10n
+
+      - name: Run tests.html in headless Chrome
+        run: |
+          google-chrome --headless --disable-gpu --no-sandbox tests.html 2>&1 | grep -E "RESULT:|FAIL|ERROR" | head -20
+        continue-on-error: false
+
+  lint-pr:
+    name: PR Metadata Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR requirements
+        run: |
+          if [ -z "${{ github.event.pull_request.title }}" ]; then
+            echo "ERROR: PR title is required"
+            exit 1
+          fi
+          echo "✓ PR title present: ${{ github.event.pull_request.title }}"
