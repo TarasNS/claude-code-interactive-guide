@@ -171,6 +171,12 @@
         );
       });
 
+      var context = ctx.config && (ctx.config.diff || ctx.config.context)
+        ? h('figure', { class: 'cl-context' },
+            h('figcaption', null, (ctx.config.context && ctx.config.context.label) || ctx.config.diffLabel || 'The change'),
+            h('pre', { class: 'cl-context-text', tabindex: '0', 'aria-label': (ctx.config.context && ctx.config.context.label) || ctx.config.diffLabel || 'The change' }, ctx.config.diff || ctx.config.context.text))
+        : null;
+
       var request = ctx.config && ctx.config.request
         ? h('blockquote', { class: 'cl-request' }, ctx.config.request)
         : null;
@@ -189,6 +195,7 @@
 
       mount(root, [
         request,
+        context,
         h('p', { class: 'cl-prompt' }, prompt),
         poolList,
         h('div', { class: 'cl-buckets', 'data-count': buckets.length }, cols),

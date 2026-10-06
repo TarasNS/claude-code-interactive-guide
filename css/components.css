@@ -278,3 +278,35 @@ button.compare-line { cursor: pointer; min-height: 44px; }
 .eg-table caption { text-align: left; font-weight: 700; padding-bottom: var(--space-2); }
 .eg-table th, .eg-table td { text-align: left; padding: var(--space-2); border: 2px solid var(--border); vertical-align: top; }
 .eg-table tr[data-outcome="regression"] td { border-style: double; border-width: 4px; font-weight: 700; }
+
+/* State vocabulary (spec 14.5): icon + text label + border style, never colour alone */
+.state-chip { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-xs); }
+.state-label { font-weight: 700; letter-spacing: 0.03em; }
+.pipeline { display: grid; gap: var(--space-4); }
+.pl-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.pl-stage { display: grid; gap: var(--space-1); align-content: start; padding: var(--space-3); border-radius: var(--radius-m); background: var(--surface-1); color: var(--text); max-width: none; min-height: 6rem; }
+.pl-name { font-weight: 700; }
+.pl-detail, .pl-approver { font-size: var(--text-xs); }
+.pl-stage[data-state="waiting"] { border: 2px dashed var(--text); }
+.pl-stage[data-state="running"] { border: 2px solid var(--text); }
+.pl-stage[data-state="passed"] { background: var(--fill-primary); color: var(--text-on-fill); border: 1px solid var(--ns-white); }
+.pl-stage[data-state="failed"] { border: 5px double var(--text); }
+.pl-stage[data-state="blocked"] { border: 4px solid var(--text); }
+.pl-stage[data-state="blocked"] .state-label { text-decoration: line-through; }
+.pl-stage[data-state="approval"] { border: 2px solid var(--text); }
+.pl-stage[data-state="approval"] .state-label, .pl-stage[data-state="approval"] .pl-name { font-weight: 800; }
+.pl-stage[data-state="locked"] { border: 3px dotted var(--text); }
+.pl-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.pl-panel { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-4); background: var(--surface-1); max-width: 70ch; }
+.pl-panel h3 { font-size: var(--text-m); font-weight: 700; }
+.pl-note { font-weight: 700; }
+
+/* Policy grid, context blocks, choice intro */
+.pg-table { border-collapse: collapse; width: 100%; }
+.pg-table th, .pg-table td { text-align: left; padding: var(--space-2); border: 2px solid var(--border); }
+.pg-cell[data-bad="true"] { border: 5px double var(--text); }
+.pg-flag { font-weight: 700; }
+.cl-context { margin: 0; }
+.cl-context figcaption { font-weight: 700; font-size: var(--text-xs); margin-bottom: var(--space-1); }
+.cl-context-text { white-space: pre; }
+.choice-intro { margin-top: 0; }
