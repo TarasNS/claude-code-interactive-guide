@@ -4,7 +4,7 @@
   var Lab = window.Lab;
 
   var EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/u;
-  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree', 'flagger', 'textlab', 'evalgate'];
+  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree', 'flagger', 'textlab', 'evalgate', 'policygrid'];
 
   function words(text) {
     return String(text || '').trim().split(/\s+/).filter(Boolean).length;
@@ -50,7 +50,7 @@
         T.ok(!seen[a.id], a.id + ' is unique');
         seen[a.id] = true;
         T.ok(b.type === 'try' ? a.maxXp > 0 : a.maxXp === 0, a.id + ' maxXp (optional deeper practice awards no XP)');
-        if (['textlab', 'terminal', 'evalgate'].indexOf(b.component) < 0) T.ok(a.items.length > 0, a.id + ' has items');
+        if (['textlab', 'terminal', 'evalgate', 'policygrid', 'pipeline'].indexOf(b.component) < 0) T.ok(a.items.length > 0, a.id + ' has items');
         var itemIds = {};
         a.items.forEach(function (it) {
           T.ok(!itemIds[it.id], a.id + '/' + it.id + ' unique');
@@ -95,7 +95,7 @@
         T.ok(b.heading, m.id + ' beat ' + i + ' heading');
         if (b.type === 'show' || b.type === 'try') T.ok(COMPONENTS.indexOf(b.component) >= 0, m.id + ' beat ' + i + ' component');
         if (b.type === 'try') T.ok(b.activity, m.id + ' beat ' + i + ' activity');
-        if (b.component && b.component !== 'pipeline') {
+        if (b.component) {
           T.ok(Lab.ui.get(b.component), m.id + ' component ' + b.component + ' is registered');
         }
       });

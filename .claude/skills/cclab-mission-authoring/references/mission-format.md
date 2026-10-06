@@ -35,7 +35,7 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `heading` | string | One key message, as a short sentence or phrase |
 | `simple` | string | Plain-English text, at most 60 words. Required except on `deeper` beats |
 | `deeper` | string | Optional extra precision for Go deeper mode, at most 60 words. Required on `deeper` beats |
-| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate` |
+| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate`, `policygrid` |
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
@@ -147,3 +147,10 @@ Lab.content.registerMission({
 - `choice` multi-question mode: `config.options` is a shared option list and `activity.items` are the questions (`answer` is one of the options). Without `config.options` it is the single-question mode.
 - `builder` slots accept `max` (a one-choice decision; a new pick replaces the old one) and `ordered` (shown as a numbered list). `config.rules` also accepts `{ type: "last", a, reason }`.
 - `evalgate`: `config.changes` is `[{ id, title, detail, verdict: "merge" | "reject", explanation, results: [{ task, outcome: "pass" | "regression", note }] }]`. The learner must run the suite for a change before deciding.
+
+## Components added in Phase 6
+
+- `pipeline`: `config.stages` is `[{ id, label, detail }]`. `config.outcomes` maps a stage id to `pass`, `gate` or `fail` (fixed scenario data). `config.gate` is `{ stage, approver, summary: [lines], approve, reject }`; `config.incident` is `{ stage, title, prompt, rollback, options: [{ id, label, correct, consequence }] }`. `config.mode: "demo"` approves the gate itself and grades nothing. `config.static: true` shows stages with a fixed `state` (`passed`, `approval`, `locked`...) and an optional `stateLabel`.
+- `policygrid`: `config.actions`, `config.envs`, `config.rules` (`{ action, env, allow: ["ask", "deny"], reason }`) and `config.solution` (used to show a finished grid).
+- `classifier` also accepts `config.diff` (a block of text such as a diff or log, shown above the cards, with `config.diffLabel`).
+- `choice` multi-question mode also accepts a per-question `options` array on an item and `config.intro` (`[{ title, text }]`) shown above the questions.

@@ -29,7 +29,7 @@
     function emit() { if (ctx.onState) ctx.onState(snapshot()); }
 
     function focusOption(it, option) {
-      var idx = options.indexOf(option);
+      var idx = (it.options || options).indexOf(option);
       var el = root.querySelector('#' + base + '-' + it.id + '-' + idx);
       if (el) el.focus();
     }
@@ -64,7 +64,8 @@
     function render() {
       var sets = items.map(function (it) {
         var finished = !!state.done[it.id];
-        var radios = options.map(function (opt, i) {
+        var opts = it.options || options;
+        var radios = opts.map(function (opt, i) {
           var rid = base + '-' + it.id + '-' + i;
           var tried = (state.tried[it.id] || []).indexOf(opt) >= 0;
           var good = finished && state.done[it.id] === opt;
@@ -83,7 +84,12 @@
         });
         return h('fieldset', { class: 'choice-set' }, h('legend', null, it.text), radios);
       });
-      mount(root, sets);
+      var intro = ctx.config.intro
+        ? h('dl', { class: 'cards choice-intro' }, ctx.config.intro.reduce(function (acc, c) {
+            return acc.concat([h('dt', null, c.title), h('dd', null, c.text)]);
+          }, []))
+        : null;
+      mount(root, [intro].concat(sets));
     }
 
     render();
