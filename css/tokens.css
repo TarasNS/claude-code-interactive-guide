@@ -1,0 +1,82 @@
+/* Design tokens (spec 14.4). The only file allowed to hold colour literals. */
+
+:root {
+  --ns-green: #1A5C00;
+  --ns-almost-black: #1C1C1C;
+  --ns-off-white: #F4F2EB;
+  --ns-white: #FFFFFF;
+  --ns-black: #000000;
+
+  --font-ui: Aptos, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Aptos Mono", ui-monospace, "Cascadia Code", Consolas, Menlo, monospace;
+
+  --text-xs: 0.875rem;
+  --text-s: 1rem;
+  --text-m: 1.125rem;
+  --text-l: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: 3rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+
+  --dur-fast: 150ms;
+  --dur-med: 250ms;
+  --dur-slow: 400ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --z-rail: 20;
+  --z-header: 30;
+  --z-drawer: 40;
+
+  /* Light theme (default) */
+  --bg: var(--ns-off-white);
+  --surface-1: var(--ns-white);
+  --surface-2: color-mix(in srgb, var(--ns-off-white) 60%, var(--ns-white));
+  --border: color-mix(in srgb, var(--ns-almost-black) 55%, var(--ns-white));
+  --code-bg: color-mix(in srgb, var(--ns-off-white) 70%, var(--ns-white));
+  --text: var(--ns-almost-black);
+  --text-on-fill: var(--ns-white);
+  --fill-primary: var(--ns-green);
+  --fill-primary-hover: color-mix(in srgb, var(--ns-green) 80%, var(--ns-almost-black));
+  --focus: var(--ns-almost-black);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.16);
+  --shadow-2: 0 4px 12px rgb(0 0 0 / 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--ns-almost-black);
+    --surface-1: color-mix(in srgb, var(--ns-white) 8%, var(--ns-almost-black));
+    --surface-2: color-mix(in srgb, var(--ns-white) 14%, var(--ns-almost-black));
+    --border: color-mix(in srgb, var(--ns-white) 55%, var(--ns-almost-black));
+    --code-bg: color-mix(in srgb, var(--ns-black) 30%, var(--ns-almost-black));
+    --text: var(--ns-white);
+    --focus: var(--ns-white);
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+    --shadow-2: 0 4px 12px rgb(0 0 0 / 0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: var(--ns-almost-black);
+  --surface-1: color-mix(in srgb, var(--ns-white) 8%, var(--ns-almost-black));
+  --surface-2: color-mix(in srgb, var(--ns-white) 14%, var(--ns-almost-black));
+  --border: color-mix(in srgb, var(--ns-white) 55%, var(--ns-almost-black));
+  --code-bg: color-mix(in srgb, var(--ns-black) 30%, var(--ns-almost-black));
+  --text: var(--ns-white);
+  --focus: var(--ns-white);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-2: 0 4px 12px rgb(0 0 0 / 0.6);
+}

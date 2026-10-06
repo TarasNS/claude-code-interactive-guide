@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Claude Engineering Lab</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <script defer src="js/core/dom.js"></script>
+  <script defer src="js/core/a11y.js"></script>
+  <script defer src="js/core/xp.js"></script>
+  <script defer src="js/core/unlock.js"></script>
+  <script defer src="js/core/store.js"></script>
+  <script defer src="js/core/router.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <header class="app-header">
+      <p class="brand">Claude Engineering Lab</p>
+      <div class="header-xp" id="header-xp">
+        <span class="xp-label" id="xp-label">XP 0 / 500</span>
+      </div>
+      <div class="header-controls" id="header-controls">
+        <button type="button" class="btn menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="rail">Menu</button>
+      </div>
+    </header>
+
+    <nav class="rail" id="rail" aria-label="Missions">
+      <h2>Missions</h2>
+      <ul id="rail-list">
+        <li><a href="#/">Home</a></li>
+        <li><a href="#/map">Dependency map</a></li>
+        <li><a href="#/summary">Journey summary</a></li>
+      </ul>
+    </nav>
+
+    <main class="lab" id="main" tabindex="-1">
+      <noscript><p>Claude Engineering Lab needs JavaScript. It makes no network requests and loads no third-party code.</p></noscript>
+    </main>
+
+    <aside class="system" id="system" aria-label="Your System">
+      <h2>Your System</h2>
+      <p>Your diagram grows as you complete missions.</p>
+    </aside>
+
+    <section class="coach" aria-label="Coach">
+      <p class="coach-title">Coach</p>
+      <div class="coach-body" id="coach" aria-live="polite" aria-atomic="true"></div>
+    </section>
+  </div>
+</body>
+</html>

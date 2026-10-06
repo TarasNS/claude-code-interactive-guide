@@ -78,15 +78,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@692973182b3a8f0ff2642bc3736060e6d3c6be5d # v4.1.7
 
-      - name: Set up Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-browser-l10n
-
       - name: Run tests.html in headless Chrome
         run: |
-          google-chrome --headless --disable-gpu --no-sandbox tests.html 2>&1 | grep -E "RESULT:|FAIL|ERROR" | head -20
-        continue-on-error: false
+          google-chrome --headless --disable-gpu --no-sandbox --virtual-time-budget=10000 --dump-dom "file://$PWD/tests.html" > tests-dom.html
+          grep -E "^(PASS|FAIL) |RESULT:" tests-dom.html
+          grep -q "RESULT: PASS" tests-dom.html
 
   lint-pr:
     name: PR Metadata Check
