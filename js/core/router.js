@@ -22,8 +22,8 @@
     if (path === '/summary') return { name: 'summary', params: {}, query: query };
     var m = /^\/m\/([a-z0-9-]+)$/.exec(path);
     if (m) {
-      var known = Lab.xp.MISSIONS.some(function (x) { return x.id === m[1]; });
-      if (known) return { name: 'mission', params: { id: m[1] }, query: query };
+      var known = Lab.xp.MISSIONS.filter(function (x) { return x.id === m[1]; })[0];
+      if (known) return { name: 'mission', params: { id: known.id }, query: query };
     }
     return { name: 'landing', params: {}, query: {} };
   }
