@@ -41,6 +41,36 @@
       deeper: 'The contract between intent and implementation: endpoints, responses, constraints and error cases, written against company policy.'
     },
     {
+      id: 'plan-mode',
+      term: 'Plan Mode',
+      simple: 'A way of working where Claude explores and proposes a plan, and you approve it before any files change.',
+      deeper: 'An interactive Claude Code mode for reading a repository and designing an approach without making changes.'
+    },
+    {
+      id: 'skill',
+      term: 'Skill',
+      simple: 'A folder of instructions that teaches Claude a repeatable kind of work, loaded when the task matches.',
+      deeper: 'A folder with a SKILL.md whose name and description sit in context, while the body and linked files load only when needed.'
+    },
+    {
+      id: 'progressive-disclosure',
+      term: 'Progressive disclosure',
+      simple: 'Loading only as much of a Skill as the task needs, so the working memory stays small.',
+      deeper: 'The description is always available, the body loads when the Skill looks relevant, and linked files open only when needed.'
+    },
+    {
+      id: 'hook',
+      term: 'Hook',
+      simple: 'An automatic rule that runs when Claude tries to do something, and can block it.',
+      deeper: 'A deterministic check around tool use that can allow, ask or deny an action, unlike guidance that can be missed.'
+    },
+    {
+      id: 'mcp',
+      term: 'MCP',
+      simple: 'A way of connecting Claude to outside tools and data, like the equipment in a professional kitchen.',
+      deeper: 'The Model Context Protocol. It gives Claude access to tools, while a Skill says how to use them well.'
+    },
+    {
       id: 'plan',
       term: 'Plan',
       simple: 'The steps and files needed to build the specification, with the risks noted.',

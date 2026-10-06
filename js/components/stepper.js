@@ -66,21 +66,43 @@
       var active = steps[state.index] && steps[state.index].active;
       var shownNodes = nodes.filter(function (n) { return shown[n.id]; });
 
-      var flow = h('ol', { class: 'flow', 'aria-label': cfg.label || 'Flow' },
-        nodes.map(function (n, i) {
-          var visible = !!shown[n.id];
-          return h('li', {
-            class: 'flow-node',
-            hidden: visible ? null : 'true',
-            'data-active': active === n.id ? 'true' : null
-          },
-            h('span', { class: 'flow-label' }, n.label),
-            n.detail ? h('span', { class: 'flow-detail' }, n.detail) : null,
-            active === n.id ? h('span', { class: 'flow-now' }, ' Now') : null,
-            i < nodes.length - 1 ? Lab.ui.icon('arrow') : null
-          );
-        })
-      );
+      function flowFor(list, label) {
+        return h('ol', { class: 'flow', 'aria-label': label || cfg.label || 'Flow' },
+          list.map(function (n, i) {
+            var visible = !!shown[n.id];
+            return h('li', {
+              class: 'flow-node',
+              hidden: visible ? null : 'true',
+              'data-active': active === n.id ? 'true' : null
+            },
+              h('span', { class: 'flow-label' }, n.label),
+              n.detail ? h('span', { class: 'flow-detail' }, n.detail) : null,
+              active === n.id ? h('span', { class: 'flow-now' }, ' Now') : null,
+              i < list.length - 1 ? Lab.ui.icon('arrow') : null
+            );
+          })
+        );
+      }
+      var flow;
+      if (cfg.paths && cfg.paths.length) {
+        flow = h('div', { class: 'flow-paths' }, cfg.paths.map(function (p) {
+          var list = nodes.filter(function (n) { return n.path === p.id; });
+          return h('section', { class: 'flow-path', 'aria-label': p.label },
+            h('h3', { class: 'flow-path-title' }, p.label), flowFor(list, p.label));
+        }));
+      } else {
+        flow = flowFor(nodes);
+      }
+
+      var meter = null;
+      var m = steps[state.index] && steps[state.index].meter;
+      if (m) {
+        var fill = h('div', { class: 'meter-fill' });
+        fill.style.width = Math.max(0, Math.min(100, m.value)) + '%';
+        meter = h('div', { class: 'meter' },
+          h('span', { class: 'meter-label' }, (cfg.meterLabel || 'Context used') + ': ' + m.label),
+          h('div', { class: 'meter-bar', role: 'meter', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': m.value, 'aria-label': cfg.meterLabel || 'Context used' }, fill));
+      }
 
       var caption = steps[state.index]
         ? h('p', { class: 'stepper-caption' }, h('strong', null, 'Step ' + (state.index + 1) + ' of ' + steps.length + ': '), steps[state.index].caption)
@@ -109,7 +131,7 @@
       }
 
       var mark = shownNodes.length;
-      mount(root, [flow, caption, h('div', { class: 'stepper-controls', 'data-revealed': mark }, controls)]);
+      mount(root, [flow, meter, caption, h('div', { class: 'stepper-controls', 'data-revealed': mark }, controls)]);
     }
 
     function focusBtn() {
