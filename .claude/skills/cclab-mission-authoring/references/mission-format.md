@@ -35,7 +35,7 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `heading` | string | One key message, as a short sentence or phrase |
 | `simple` | string | Plain-English text, at most 60 words. Required except on `deeper` beats |
 | `deeper` | string | Optional extra precision for Go deeper mode, at most 60 words. Required on `deeper` beats |
-| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab` |
+| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate` |
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
@@ -141,3 +141,9 @@ Lab.content.registerMission({
 - `builder`: `activity.items` with `answer` set to a slot id, or `none` for a distractor that must stay out; `config.slots`, `config.preview`, optional `config.rules` (`{ type: "before", a, b, reason }`).
 - `textlab`: the Skill description lab (spec 9.8.1). No items; the rules live in `js/core/skills-validator.js`.
 - `stepper` also accepts `config.paths` (nodes then carry a `path` id, for side-by-side flows) and per-step `meter: { value, label }`.
+
+## Components added in Phase 5
+
+- `choice` multi-question mode: `config.options` is a shared option list and `activity.items` are the questions (`answer` is one of the options). Without `config.options` it is the single-question mode.
+- `builder` slots accept `max` (a one-choice decision; a new pick replaces the old one) and `ordered` (shown as a numbered list). `config.rules` also accepts `{ type: "last", a, reason }`.
+- `evalgate`: `config.changes` is `[{ id, title, detail, verdict: "merge" | "reject", explanation, results: [{ task, outcome: "pass" | "regression", note }] }]`. The learner must run the suite for a change before deciding.

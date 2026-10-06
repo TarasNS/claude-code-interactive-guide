@@ -28,6 +28,9 @@
         var ia = order.indexOf(r.a);
         var ib = order.indexOf(r.b);
         if (ia >= 0 && ib >= 0 && ia > ib) problems.push({ id: r.a, reason: r.reason });
+      } else if (r.type === 'last') {
+        var il = order.indexOf(r.a);
+        if (il >= 0 && il !== order.length - 1) problems.push({ id: r.a, reason: r.reason });
       }
     });
     return { ok: problems.length === 0, problems: problems };
@@ -66,6 +69,15 @@
     function put(slotId) {
       if (state.solved) return;
       if (!state.selected) { say('info', 'Pick an item from the palette first, then choose where to put it.'); return; }
+      var slotDef = slots.filter(function (s2) { return s2.id === slotId; })[0];
+      if (slotDef && slotDef.max) {
+        var inSlot = state.order.filter(function (id) { return state.placed[id] === slotId; });
+        while (inSlot.length >= slotDef.max) {
+          var out = inSlot.shift();
+          delete state.placed[out];
+          state.order = state.order.filter(function (x) { return x !== out; });
+        }
+      }
       state.placed[state.selected] = slotId;
       state.order = state.order.filter(function (x) { return x !== state.selected; });
       state.order.push(state.selected);
@@ -140,10 +152,10 @@
             'aria-disabled': (!state.selected || state.solved) ? 'true' : null,
             onclick: function () { put(s.id); }
           }, 'Put here'),
-          h('ul', { class: 'cl-placed', 'aria-label': 'In ' + s.label }, here.map(function (id) {
+          h(s.ordered ? 'ol' : 'ul', { class: 'cl-placed', 'aria-label': 'In ' + s.label }, here.map(function (id, idx) {
             var it = itemById(id);
             return h('li', { class: 'cl-placed-item' },
-              h('span', null, it.text),
+              h('span', null, (s.ordered ? (idx + 1) + '. ' : '') + it.text),
               state.solved ? Lab.ui.icon('check') : h('button', { type: 'button', class: 'btn bd-remove', 'aria-label': 'Remove: ' + it.text, onclick: function () { remove(id); } }, 'Remove'));
           })));
       });

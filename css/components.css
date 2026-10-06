@@ -264,3 +264,17 @@ button.compare-line { cursor: pointer; min-height: 44px; }
 .cards dt { font-weight: 700; }
 .cards dd { margin: 0; padding-bottom: var(--space-3); border-bottom: 2px solid var(--border); }
 .beat-note { font-size: var(--text-xs); }
+
+/* Choice (multi-question) and eval gate */
+.choice-multi { display: grid; gap: var(--space-4); }
+.evalgate { display: grid; gap: var(--space-4); }
+.eg-card { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-4); background: var(--surface-1); }
+.eg-card[data-decided="true"] { border: 4px solid var(--text); }
+.eg-card h3 { font-size: var(--text-m); font-weight: 700; }
+.eg-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin: var(--space-3) 0; }
+.eg-actions .btn[aria-disabled="true"] { border-style: dashed; cursor: not-allowed; }
+.eg-decision { display: inline-flex; gap: var(--space-1); align-items: center; }
+.eg-table { width: 100%; border-collapse: collapse; font-size: var(--text-xs); }
+.eg-table caption { text-align: left; font-weight: 700; padding-bottom: var(--space-2); }
+.eg-table th, .eg-table td { text-align: left; padding: var(--space-2); border: 2px solid var(--border); vertical-align: top; }
+.eg-table tr[data-outcome="regression"] td { border-style: double; border-width: 4px; font-weight: 700; }

@@ -65,6 +65,24 @@
       deeper: 'A deterministic check around tool use that can allow, ask or deny an action, unlike guidance that can be missed.'
     },
     {
+      id: 'subagent',
+      term: 'Subagent',
+      simple: 'A scoped helper that Claude hands part of a task to, such as researching or checking the work.',
+      deeper: 'A helper with its own context inside one Claude Code task, which keeps reading and checking out of the main conversation.'
+    },
+    {
+      id: 'feedback-loop',
+      term: 'Feedback loop',
+      simple: 'Letting Claude run a check, read the result, fix what failed and check again.',
+      deeper: 'Claude acts on real signals such as tests and builds that a person chose, so errors are caught before review.'
+    },
+    {
+      id: 'eval',
+      term: 'Eval',
+      simple: 'A fixed set of sample tasks that shows whether Claude still behaves well after a change.',
+      deeper: 'A regression suite for how Claude is configured, run before and after changes to instructions, Skills, Hooks, the model or the prompt.'
+    },
+    {
       id: 'mcp',
       term: 'MCP',
       simple: 'A way of connecting Claude to outside tools and data, like the equipment in a professional kitchen.',

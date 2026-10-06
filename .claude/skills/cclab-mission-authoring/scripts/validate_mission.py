@@ -50,7 +50,7 @@ ACTIVITIES = {
 }
 
 BEAT_TYPES = {"explain", "show", "try", "debrief", "deeper"}
-COMPONENTS = {"choice", "classifier", "compare", "stepper", "terminal", "pipeline", "builder", "tree", "flagger", "textlab"}
+COMPONENTS = {"choice", "classifier", "compare", "stepper", "terminal", "pipeline", "builder", "tree", "flagger", "textlab", "evalgate"}
 STAGES = {"start", "plan", "design", "build", "test", "deploy", "maintain"}
 MAX_WORDS = 60
 EMOJI = re.compile("[\U0001F000-\U0001FAFF☀-➿⬀-⯿️]")
