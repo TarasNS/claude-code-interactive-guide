@@ -94,7 +94,7 @@
 
   function missionTitle(id) {
     var m = Lab.xp.MISSIONS.filter(function (x) { return x.id === id; })[0];
-    return 'Mission ' + m.n + ': ' + id;
+    return 'Mission ' + m.n + ': ' + m.id;
   }
 
   function renderRoute(route) {
