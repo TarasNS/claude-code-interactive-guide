@@ -76,7 +76,7 @@
 
 @media (min-width: 768px) {
   .app {
-    grid-template-columns: 6.5rem minmax(0, 1fr);
+    grid-template-columns: 7.5rem minmax(0, 1fr);
     grid-template-areas: "header header" "rail lab" "coach coach";
   }
   .rail { display: block; padding: var(--space-3); }

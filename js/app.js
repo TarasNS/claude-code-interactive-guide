@@ -13,6 +13,9 @@
   var settingsPanel, saveNote, confirmArea, explainBtn;
   var lastExplain = null;
   var currentRoute = null;
+  var asideDiagram = null;
+  var tabDiagram = null;
+  var activeMap = null;
 
   function completedMap() {
     var map = {};
@@ -119,6 +122,53 @@
     );
   }
 
+  function renderMapView() {
+    activeMap = Lab.ui.map.create();
+    return h('div', null,
+      h('h1', null, 'Dependency map'),
+      h('p', null, 'How the parts of an AI-native workflow depend on each other. Lines point from a prerequisite to what depends on it.'),
+      activeMap.el
+    );
+  }
+
+  function tabButton(id, label, panelId, selectedFlag) {
+    return h('button', {
+      type: 'button', role: 'tab', id: id, 'aria-controls': panelId,
+      'aria-selected': selectedFlag ? 'true' : 'false', tabindex: selectedFlag ? '0' : '-1'
+    }, label);
+  }
+
+  function withSystemTab(view) {
+    tabDiagram = Lab.ui.diagram.create();
+    var missionPanel = h('div', { role: 'tabpanel', id: 'tab-panel-mission', 'aria-labelledby': 'tab-mission', class: 'system-panel' }, view);
+    var systemPanel = h('div', { role: 'tabpanel', id: 'tab-panel-system', 'aria-labelledby': 'tab-system', class: 'system-panel', hidden: 'true' },
+      h('h2', null, 'Your System'), tabDiagram.el);
+    var tabMission = tabButton('tab-mission', 'Mission', 'tab-panel-mission', true);
+    var tabSystem = tabButton('tab-system', 'Your System', 'tab-panel-system', false);
+
+    function activate(which, focus) {
+      var sys = which === 'system';
+      tabMission.setAttribute('aria-selected', sys ? 'false' : 'true');
+      tabMission.setAttribute('tabindex', sys ? '-1' : '0');
+      tabSystem.setAttribute('aria-selected', sys ? 'true' : 'false');
+      tabSystem.setAttribute('tabindex', sys ? '0' : '-1');
+      if (sys) { missionPanel.setAttribute('hidden', 'true'); systemPanel.removeAttribute('hidden'); }
+      else { systemPanel.setAttribute('hidden', 'true'); missionPanel.removeAttribute('hidden'); }
+      if (focus) (sys ? tabSystem : tabMission).focus();
+    }
+    tabMission.addEventListener('click', function () { activate('mission'); });
+    tabSystem.addEventListener('click', function () { activate('system'); });
+    [tabMission, tabSystem].forEach(function (t) {
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          activate(t === tabMission ? 'system' : 'mission', true);
+        }
+      });
+    });
+    return h('div', null, h('div', { class: 'system-tabs', role: 'tablist', 'aria-label': 'Mission or Your System' }, tabMission, tabSystem), missionPanel, systemPanel);
+  }
+
   function missionRow(id) {
     return Lab.xp.MISSIONS.filter(function (x) { return x.id === id; })[0];
   }
@@ -138,11 +188,13 @@
   function renderRoute(route) {
     currentRoute = route;
     Lab.mission.leave();
+    tabDiagram = null;
+    activeMap = null;
     var view;
     if (route.name === 'landing') view = renderLanding();
-    else if (route.name === 'map') view = renderPlaceholder('Dependency map');
+    else if (route.name === 'map') view = renderMapView();
     else if (route.name === 'summary') view = renderPlaceholder('Journey summary');
-    else view = renderMissionRoute(route);
+    else view = withSystemTab(renderMissionRoute(route));
     mount(main, view);
     if (route.name !== 'landing' && route.name !== 'mission') store.setLastView(window.location.hash);
     Lab.a11y.focusHeading(main);
@@ -250,6 +302,9 @@
   function onStoreChange() {
     var explain = store.getSettings().explain;
     refresh();
+    if (asideDiagram) asideDiagram.update();
+    if (tabDiagram) tabDiagram.update();
+    if (activeMap) activeMap.update();
     if (explain !== lastExplain) {
       lastExplain = explain;
       syncExplainButton();
@@ -268,6 +323,12 @@
 
     buildControls();
     Lab.a11y.applySettings(store.getSettings());
+
+    var sysBox = document.getElementById('system');
+    var sysIntro = sysBox.querySelector('p');
+    if (sysIntro) sysBox.removeChild(sysIntro);
+    asideDiagram = Lab.ui.diagram.create();
+    sysBox.appendChild(asideDiagram.el);
 
     menuToggle.addEventListener('click', function () {
       if (rail.hasAttribute('data-open')) closeRail(); else openRail();

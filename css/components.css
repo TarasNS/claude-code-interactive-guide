@@ -115,3 +115,66 @@ button.compare-line { cursor: pointer; min-height: 44px; }
   }
   .rail-link { justify-content: center; }
 }
+
+/* Your System diagram */
+.sys { display: grid; gap: var(--space-3); }
+.sys-svg { max-width: 100%; height: auto; display: block; }
+.sys-box { fill: var(--surface-1); stroke: var(--text); stroke-width: 2; }
+.sys-node { cursor: pointer; }
+.sys-node[data-status="preview"] .sys-box { stroke-dasharray: 6 4; }
+.sys-node:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sys-selected .sys-box { stroke-width: 5; }
+.sys-label { fill: var(--text); font: 700 16px var(--font-ui); }
+.sys-human { fill: var(--text); font: 14px var(--font-ui); }
+.sys-person { fill: none; stroke: var(--text); stroke-width: 2; }
+.sys-edge { stroke: var(--text); stroke-width: 3; fill: none; }
+.sys-edge-preview { stroke-dasharray: 2 6; }
+.sys-arrow { fill: var(--text); }
+.sys-new .sys-box, .sys-new .sys-label { animation: sys-in var(--dur-med) var(--ease); }
+@keyframes sys-in { from { opacity: 0; } to { opacity: 1; } }
+.sys-caption { margin: 0; font-size: var(--text-xs); }
+.sys-def { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-3); background: var(--bg); }
+.sys-def h3 { font-size: var(--text-s); font-weight: 700; }
+.sys-alt summary { cursor: pointer; font-size: var(--text-xs); }
+.sys-toggle[aria-pressed="true"] { border-width: 4px; font-weight: 700; }
+
+/* Tabs for small screens */
+.system-tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-4); }
+.system-tabs [role="tab"] { min-height: 44px; padding: var(--space-2) var(--space-4); border: 2px solid var(--border); border-radius: var(--radius-m); background: var(--surface-1); cursor: pointer; }
+.system-tabs [role="tab"][aria-selected="true"] { border: 4px solid var(--text); font-weight: 700; padding: calc(var(--space-2) - 2px) calc(var(--space-4) - 2px); }
+.system-panel[hidden] { display: none; }
+@media (min-width: 1280px) { .system-tabs { display: none; } }
+
+/* Dependency map */
+.map { display: grid; gap: var(--space-4); }
+.map-svg { width: 100%; height: auto; display: block; background: var(--surface-1); border: 2px solid var(--border); border-radius: var(--radius-m); }
+.map-box { fill: var(--surface-1); stroke: var(--text); stroke-width: 2; }
+.map-node { cursor: pointer; }
+.map-node[data-status="locked"] .map-box { stroke-dasharray: 2 5; stroke-width: 3; }
+.map-node:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.map-selected .map-box { stroke-width: 6; }
+.map-label { fill: var(--text); font: 700 18px var(--font-ui); }
+.map-sub { fill: var(--text); font: 700 12px var(--font-ui); letter-spacing: 0.05em; }
+.map-lock { fill: none; stroke: var(--text); stroke-width: 2; }
+.map-edge { stroke: var(--text); stroke-width: 3; fill: none; }
+.map-edge-dotted { stroke-dasharray: 2 7; }
+.map-edge-hl { stroke-width: 6; }
+.map-arrow { fill: var(--text); }
+.map-legend { list-style: none; padding: 0; margin: var(--space-3) 0; display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: var(--text-xs); }
+.map-legend li { display: flex; align-items: center; gap: var(--space-2); max-width: none; }
+.map-key { flex: none; }
+.map-hint { font-size: var(--text-xs); }
+.map-panel { border: 2px solid var(--border); border-radius: var(--radius-m); padding: var(--space-4); background: var(--surface-1); max-width: 70ch; }
+.map-panel h2 { font-size: var(--text-l); }
+.map-fields dt { font-weight: 700; text-transform: uppercase; font-size: var(--text-xs); letter-spacing: 0.04em; margin-top: var(--space-3); }
+.map-fields dd { margin: 0; }
+.map-locked { font-weight: 700; }
+.map-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+.map-list-item { max-width: none; border: 2px solid var(--border); border-radius: var(--radius-m); background: var(--surface-1); padding: var(--space-2) var(--space-3); }
+.map-list-item[data-status="locked"] { border-style: dotted; }
+.map-list-item summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: var(--space-2); font-weight: 700; }
+.map-listbox { display: none; }
+@media (max-width: 767px) {
+  .map-graph { display: none; }
+  .map-listbox { display: block; }
+}
