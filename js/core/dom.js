@@ -3,6 +3,18 @@
   var Lab = (window.Lab = window.Lab || {});
   var counter = 0;
 
+  var URL_ATTRS = /^(href|src|action|formaction|xlink:href)$/i;
+  var NAME_OK = /^[a-zA-Z][a-zA-Z0-9:_-]*$/;
+
+  function isSafeAttribute(name, value) {
+    if (!NAME_OK.test(name) || name.toLowerCase() === 'style') return false;
+    if (URL_ATTRS.test(name)) {
+      var text = String(value).replace(/[\u0000- ]/g, '');
+      return /^(#|\/|\.|[a-z0-9-]+\/|https:)/i.test(text) || text === '';
+    }
+    return true;
+  }
+
   function h(tag, attrs) {
     var el = document.createElement(tag);
     if (attrs) {
@@ -10,8 +22,9 @@
         var v = attrs[k];
         if (v === null || v === undefined || v === false) return;
         if (k === 'text') el.textContent = v;
-        else if (k.indexOf('on') === 0 && typeof v === 'function') el.addEventListener(k.slice(2), v);
-        else el.setAttribute(k, v === true ? '' : String(v));
+        else if (k.indexOf('on') === 0) {
+          if (typeof v === 'function') el.addEventListener(k.slice(2), v);
+        } else if (isSafeAttribute(k, v)) el.setAttribute(k, v === true ? '' : String(v));
       });
     }
     for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
