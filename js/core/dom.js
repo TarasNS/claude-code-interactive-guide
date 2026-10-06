@@ -34,7 +34,7 @@
   function append(el, child) {
     if (child === null || child === undefined || child === false) return;
     if (Array.isArray(child)) child.forEach(function (c) { append(el, c); });
-    else if (child.nodeType) el.appendChild(child);
+    else if (child instanceof Node) el.appendChild(child);
     else el.appendChild(document.createTextNode(String(child)));
   }
 
