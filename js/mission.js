@@ -126,7 +126,7 @@
 
   function handleResult(mission, beat, result) {
     var activity = beat.activity;
-    var outcome = Lab.store.recordAttempt(activity.id, { correct: result.correct, maxXp: activity.maxXp });
+    var outcome = Lab.store.recordAttempt(activity.id, { correct: result.correct, maxXp: typeof result.maxXp === 'number' ? result.maxXp : activity.maxXp });
     if (result.correct && outcome.awarded > 0) {
       var msg = '+' + outcome.awarded + ' XP: ' + beat.heading;
       Lab.coach.appendExtra(msg);
@@ -234,12 +234,12 @@
     var nextMission = Lab.xp.MISSIONS.filter(function (m) { return m.n === mission.number + 1; })[0];
 
     var next = {
-      label: isLast ? (nextMission ? 'Next mission' : 'Finish') : 'Continue',
+      label: isLast ? (nextMission ? 'Next mission' : 'Journey summary') : 'Continue',
       enabled: !gated,
       reason: 'Complete the activity to continue.',
       onClick: function () {
         if (isLast) {
-          Lab.router.go(nextMission ? '#/m/' + nextMission.id : '#/');
+          Lab.router.go(nextMission ? '#/m/' + nextMission.id : '#/summary');
         } else {
           s.beat = visible[pos + 1];
           renderBeat(true);

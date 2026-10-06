@@ -16,6 +16,7 @@
   var asideDiagram = null;
   var tabDiagram = null;
   var activeMap = null;
+  var activeSummary = null;
 
   function completedMap() {
     var map = {};
@@ -190,10 +191,11 @@
     Lab.mission.leave();
     tabDiagram = null;
     activeMap = null;
+    activeSummary = null;
     var view;
     if (route.name === 'landing') view = renderLanding();
     else if (route.name === 'map') view = renderMapView();
-    else if (route.name === 'summary') view = renderPlaceholder('Journey summary');
+    else if (route.name === 'summary') { activeSummary = Lab.summary.view(); view = activeSummary.el; }
     else view = withSystemTab(renderMissionRoute(route));
     mount(main, view);
     if (route.name !== 'landing' && route.name !== 'mission') store.setLastView(window.location.hash);
@@ -305,6 +307,7 @@
     if (asideDiagram) asideDiagram.update();
     if (tabDiagram) tabDiagram.update();
     if (activeMap) activeMap.update();
+    if (activeSummary) activeSummary.diagrams.forEach(function (d) { d.update(); });
     if (explain !== lastExplain) {
       lastExplain = explain;
       syncExplainButton();

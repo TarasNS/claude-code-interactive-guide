@@ -35,7 +35,7 @@ Nothing else may appear in the file except a single optional first-line comment 
 | `heading` | string | One key message, as a short sentence or phrase |
 | `simple` | string | Plain-English text, at most 60 words. Required except on `deeper` beats |
 | `deeper` | string | Optional extra precision for Go deeper mode, at most 60 words. Required on `deeper` beats |
-| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate`, `policygrid` |
+| `component` | string | Optional for `explain`; required for `show` and `try`: `choice`, `classifier`, `compare`, `stepper`, `terminal`, `pipeline`, `builder`, `tree`, `flagger`, `textlab`, `evalgate`, `policygrid`, `workflow` |
 | `config` | object | Component configuration (steps, views, script, scenario, tree) |
 | `simulated` | boolean | `true` on any beat whose `config.script` contains `"who": "claude"` lines |
 | `caption` | string | Optional; use it to say "illustrative" where behaviour is not typical |
@@ -154,3 +154,7 @@ Lab.content.registerMission({
 - `policygrid`: `config.actions`, `config.envs`, `config.rules` (`{ action, env, allow: ["ask", "deny"], reason }`) and `config.solution` (used to show a finished grid).
 - `classifier` also accepts `config.diff` (a block of text such as a diff or log, shown above the cards, with `config.diffLabel`).
 - `choice` multi-question mode also accepts a per-question `options` array on an item and `config.intro` (`[{ title, text }]`) shown above the questions.
+
+## Components added in Phase 7
+
+- `workflow`: the final challenge. `config.packet` is `[{ id, label, lines }]` (scenario tabs), `config.tiles` is `[{ id, label, hint }]` (the twelve tiles, whose ids the rules engine in `js/core/workflow.js` knows), `config.policies` is `[{ id, label }]`, `config.reasons` is `[{ id, label }]` for a subagent, and `config.simulation` is `{ nodes, steps }` for the final animated run. The rules (R1 to R8, O1, N1), their consequence text and the scoring live in `js/core/workflow.js`, not in mission data. A component may report `maxXp` in its result to award a partial score.

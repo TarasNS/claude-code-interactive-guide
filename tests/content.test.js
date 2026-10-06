@@ -4,7 +4,7 @@
   var Lab = window.Lab;
 
   var EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/u;
-  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree', 'flagger', 'textlab', 'evalgate', 'policygrid'];
+  var COMPONENTS = ['choice', 'classifier', 'compare', 'stepper', 'terminal', 'pipeline', 'builder', 'tree', 'flagger', 'textlab', 'evalgate', 'policygrid', 'workflow'];
 
   function words(text) {
     return String(text || '').trim().split(/\s+/).filter(Boolean).length;
@@ -50,7 +50,7 @@
         T.ok(!seen[a.id], a.id + ' is unique');
         seen[a.id] = true;
         T.ok(b.type === 'try' ? a.maxXp > 0 : a.maxXp === 0, a.id + ' maxXp (optional deeper practice awards no XP)');
-        if (['textlab', 'terminal', 'evalgate', 'policygrid', 'pipeline'].indexOf(b.component) < 0) T.ok(a.items.length > 0, a.id + ' has items');
+        if (['textlab', 'terminal', 'evalgate', 'policygrid', 'pipeline', 'workflow'].indexOf(b.component) < 0) T.ok(a.items.length > 0, a.id + ' has items');
         var itemIds = {};
         a.items.forEach(function (it) {
           T.ok(!itemIds[it.id], a.id + '/' + it.id + ' unique');
